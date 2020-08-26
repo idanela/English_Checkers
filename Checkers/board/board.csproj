@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{847164AE-E240-4128-A08B-EA39BF71AF93}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Checkers</RootNamespace>
-    <AssemblyName>Checkers</AssemblyName>
+    <ProjectGuid>{21F0F380-D8FA-42BD-9F71-91451AA0914E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>board</RootNamespace>
+    <AssemblyName>board</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,14 +32,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Board.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CheckersPiece\CheckersPiece.csproj">
+      <Project>{45597830-ebc8-44ef-8a68-58fb21a76c63}</Project>
+      <Name>CheckersPiece</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

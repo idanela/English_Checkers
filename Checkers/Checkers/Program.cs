@@ -2,11 +2,11 @@
 
 namespace Checkers
 {
-    class Program
+    public class Program
     {
         void main()
         {
-
+           
         }
     }
 }
