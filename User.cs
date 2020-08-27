@@ -1,13 +1,16 @@
 using System;
 using System.Runtime.CompilerServices;
 using CheckersPiece;
+using CheckersBoard;
 
 namespace Player
 {
     public struct User
     {
         // Constants:
-        private const short k_NumberOfCheckerPieces = 12;
+        private const char k_Quit = 'Q';
+        private const char k_Yes = 'Y';
+        private const char k_Empty = ' ';
 
         // Data members:
         private readonly string m_Name;
@@ -21,7 +24,6 @@ namespace Player
         {
             m_Name = i_Name;
             m_Score = 0;
-            m_CheckersPiece = new CheckerPiece[k_NumberOfCheckerPieces];
             m_CheckerPieceKind = i_CheckerKind;
         }
 
@@ -64,20 +66,32 @@ namespace Player
 
 
         // Methods:
-        public static void Play(string i_CheckerPosition, string i_CheckerNextPosition)
+        public static void InitializeCheckersArray(int i_BoardSize)
         {
-            // This method called to play the user's move.
+            int sizeOfPieces = ((i_BoardSize / 2) * 3);
+
+            m_CheckersPiece = new CheckerPiece[sizeOfPieces];
+        }
+
+        public void Play(string i_CheckerPosition, string i_CheckerNextPosition)
+        {
+            // First, check if the given input is valid.
+            Validation.CheckValidInput(Name, ref i_CheckerPosition, ref i_CheckerNextPosition);
+
+            // Second, finds the match checker piece, with it's position.
             CheckerPiece? currentCheckerPiece = findCheckerPiece(i_CheckerPosition);
 
+            // Checks if the checker piece was found.
             if (currentCheckerPiece != null)
             {
+                // Make the moves that the user wanted. Regular move or King move.
                 if (isRegularChecker(currentCheckerPiece.Value))
                 {
-                    MoveRegularTool(i_CheckerPosition, i_CheckerNextPosition);
+                    MoveUtils.MoveRegularTool(i_CheckerPosition, i_CheckerNextPosition);
                 }
                 else
                 {
-                    MoveKingTool(i_CheckerPosition, i_CheckerNextPosition);
+                    MoveUtils.MoveKingTool(i_CheckerPosition, i_CheckerNextPosition);
                 }
             }
         }
@@ -97,49 +111,28 @@ namespace Player
 
         private static bool isRegularChecker(CheckerPiece i_CheckerPiece)
         {
-            return i_CheckerPiece.PieceKind == CheckerPiece.ePieceKind.FirstPlayer ||
-                   i_CheckerPiece.PieceKind == CheckerPiece.ePieceKind.SecondPlayer;
+            return i_CheckerPiece.PieceKind == CheckerPiece.ePieceKind.X ||
+                   i_CheckerPiece.PieceKind == CheckerPiece.ePieceKind.O;
         }
 
-        public static void Quit(string i_QuitInput)
+        public static void Quit(char i_QuitInput)
         {
-            // Need to quit the game if the user press q(?).
-        }
+            // Quit the game if the user press 'Q'.
+            char answer;
 
-        public static void MoveRegularTool(string i_PositionFrom, string i_PositionTo)
-        {
-            // Check valid move - include: inborder, valid input, is empty cell.
-            // Update board - new tool position.
-            // Check if can eat.
-        }
+            if (i_QuitInput == k_Quit)
+            {
+                // Make sure if the player really intended to quit the game or pressed by mistake.
+                Console.WriteLine("Are you sure you want to quit the game? press Y if yes.");
+                char.TryParse(Console.ReadLine(), out answer);
 
-        private static void checkValidMove(string i_PositionTo)
-        {
-            // Check if the position is in border,
-            // is empty cell available in the given position.
-            // Check valid indexes: A-H, a-h.
-        }
+                if (answer == k_Yes)
+                {
+                    // Show score, and declare winner and loser.
+                }
+            }
 
-        public static void MoveKingTool(string i_PositionFrom, string i_PositionTo)
-        {
-            // Check valid move - include: inborder, valid input, is empty cell (for king tool).
-            // Update board - new tool position
-            // Check if can eat.
-        }
-
-        private static void checkValidKingMove(string i_PositionTo)
-        {
-            // Check if the position is in border,
-            // is empty cell available in the given position - for king tool.
-            // Check valid indexes: A-H, a-h.
-        }
-
-        private static bool isMoveInBorders(string i_PositionTo)
-        {
-            // Check if the given position is in the borders.
-            // Means the index is less(!) than border's size.
-
-            return false;   // Temporary return value.
+            // Continue otherwise.
         }
     }
 }
