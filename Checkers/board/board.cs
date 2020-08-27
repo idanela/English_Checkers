@@ -12,7 +12,7 @@ namespace CheckersBoard
         }
 
         private char[,] m_CheckersBoard;
-        eBoardSize m_SizeOfBoard;
+        private eBoardSize m_SizeOfBoard;
         public Board(eBoardSize i_SizeOfBoard)
         {
             m_CheckersBoard = new char[(uint)i_SizeOfBoard, (uint)i_SizeOfBoard];
@@ -57,7 +57,7 @@ namespace CheckersBoard
                 {
                     if(i % 2 == 0)
                     {
-                        if(j % 2 != 0)
+                        if (j % 2 != 0)
                         {
                             m_CheckersBoard[i,j] = 'O';
                         }
@@ -118,7 +118,7 @@ namespace CheckersBoard
 
         private static string createLineString(uint i_SizeOfBoard)
         {
-            StringBuilder EqualsLine = new StringBuilder("=========================");
+            StringBuilder EqualsLine = new StringBuilder(" ========================");
 
             for(int i = 6; i < i_SizeOfBoard; i++)
             {
@@ -128,8 +128,25 @@ namespace CheckersBoard
             return EqualsLine.ToString();
         }
 
+        private bool isCheckerAvailable(string i_Move)
+        {
+            int height;
+            int width = getIndexInBoard(ref i_Move, out height);
 
+            return isCheckerValid(height, width) && m_CheckersBoard[height, width] == ' ';             
+        }
        
+        private int getIndexInBoard(ref string i_Move, out int o_Height)
+        {
+            o_Height = i_Move[0] - 'A';
+
+            return i_Move[1] - 'a';
+        }
+
+        private bool isCheckerValid(int i_Height, int i_Width)
+        {
+            return i_Width < (uint)m_SizeOfBoard && i_Width >= 0 || i_Height < (uint)m_SizeOfBoard && i_Height >= 0;
+                }
 
     }
 }

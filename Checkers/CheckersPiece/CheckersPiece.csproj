@@ -41,5 +41,11 @@
   <ItemGroup>
     <Compile Include="CheckersPiece.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\board\board.csproj">
+      <Project>{21f0f380-d8fa-42bd-9f71-91451aa0914e}</Project>
+      <Name>board</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
