@@ -14,7 +14,7 @@ namespace CheckersBoard
         private const char k_BlankChecker = ' '; // constant.
 
         private readonly char[,] m_CheckersBoard;
-        private eBoardSize m_SizeOfBoard;
+        private readonly eBoardSize m_SizeOfBoard;
         public Board(eBoardSize i_SizeOfBoard)
         {
             m_CheckersBoard = new char[(uint)i_SizeOfBoard, (uint)i_SizeOfBoard];
@@ -26,11 +26,6 @@ namespace CheckersBoard
             get
             {
                 return m_SizeOfBoard;
-            }
-
-            set
-            {
-                m_SizeOfBoard = value;
             }
         }
 
@@ -64,31 +59,35 @@ namespace CheckersBoard
             {
                for(int j = 0; j < (uint)m_SizeOfBoard; j++)
                 {
-                    if(i % 2 == 0)
-                    {
-                        if (j % 2 != 0)
-                        {
-                            m_CheckersBoard[i,j] = 'O';
-                        }
-                        else
-                        {
-                            m_CheckersBoard[(uint)m_SizeOfBoard - 1 - i, j] = 'X';
-                        }
-                    }
-                    else
-                    {
-                        if (j % 2 == 0)
-                        {
-                            m_CheckersBoard[i, j] = 'O';
-                        }
-                        else
-                        {
-                            m_CheckersBoard[(uint)m_SizeOfBoard - 1 - i, j] = 'X';
-                        }
-                    }
+                    placePlayerAccordingToToRowAndCol(i, j);
                 }
 
                 i++;
+            }
+        }
+        private void  placePlayerAccordingToToRowAndCol(int i_Row,int i_Col)
+        {
+            if (i_Row % 2 == 0)
+            {
+                if (i_Col % 2 != 0)
+                {
+                    m_CheckersBoard[i_Row, i_Col] = 'O';
+                }
+                else
+                {
+                    m_CheckersBoard[(uint)m_SizeOfBoard - 1 - i_Row, i_Col] = 'X';
+                }
+            }
+            else
+            {
+                if (i_Col % 2 == 0)
+                {
+                    m_CheckersBoard[i_Row, i_Col] = 'O';
+                }
+                else
+                {
+                    m_CheckersBoard[(uint)m_SizeOfBoard - 1 - i_Row, i_Col] = 'X';
+                }
             }
         }
 
@@ -118,7 +117,7 @@ namespace CheckersBoard
 
             for (int i = 6; i < i_SizeOfBoard; i++)
             {
-                indexesLine.Append(letterIndex + "   ");
+                indexesLine.AppendFormat( letterIndex + "   ");
                 letterIndex++;
             }
 
@@ -137,25 +136,42 @@ namespace CheckersBoard
             return EqualsLine.ToString();
         }
 
-        private bool isCheckerAvailable(string i_Move)
+        public bool IsCheckerAvailable(string i_Move)
         {
             int height;
             int width = getIndexInBoard(ref i_Move, out height);
 
-            return isCheckerValid(height, width) && m_CheckersBoard[height, width] == k_BlankChecker;             
+            return isCheckerValidPosition(height, width) && m_CheckersBoard[height, width] == k_BlankChecker;             
         }
        
-        private int getIndexInBoard(ref string i_Move, out int o_Height)
+        private int getIndexInBoard(ref string i_DestinationChecker, out int o_Height)
         {
-            o_Height = i_Move[0] - 'A';
-
-            return i_Move[1] - 'a';
+            o_Height = i_DestinationChecker[0] - 'A';
+            return i_DestinationChecker[1] - 'a';
         }
 
-        private bool isCheckerValid(int i_Height, int i_Width)
+        private bool isCheckerValidPosition(int i_Height, int i_Width)
         {
             return i_Width < (uint)m_SizeOfBoard && i_Width >= 0 || i_Height < (uint)m_SizeOfBoard && i_Height >= 0;
         }
 
+        private void updateBoardAccordingToPlayersMove(int i_Row,int i_Col, int i_NewRow, int i_NewCol)
+        {
+            m_CheckersBoard[i_NewRow, i_NewCol] = m_CheckersBoard[i_Row, i_Col];
+            m_CheckersBoard[i_Row, i_Col] = ' ';
+        }
+
+        private void clearPositionOfDeadCheckerPiece(int i_Row, int i_Col)
+        {
+            m_CheckersBoard[i_Row, i_Col] = ' ';
+        }
+
+        private void updateAfterEating(int i_row, int i_col,int i_newRow,int i_NewCol, int i_RowTokill, int i_ColTokill )
+        {
+            updateBoardAccordingToPlayersMove(i_row, i_col, i_newRow, i_NewCol);
+            clearPositionOfDeadCheckerPiece(i_RowTokill, i_ColTokill);
+        }
     }
+    
+    
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using CheckersBoard;
-namespace CheckersPiece
+namespace CheckerPiece
 {
    public struct CheckersPiece
     {
@@ -14,16 +14,18 @@ namespace CheckersPiece
 
         private bool m_IsKing;
         public ePieceKind m_PieceKind;
-        int m_Height;
-        int m_width;
+        bool m_IsAlive;
+        int m_RowIndex;
+        int m_ColIndex;
 
 
         public CheckersPiece(ePieceKind i_PieceKind, int i_Height , int i_Width)
         {
-            m_PieceKind = i_PieceKind;
             m_IsKing = false;
-            m_Height = i_Height;
-            m_width = i_Width; 
+            m_PieceKind = i_PieceKind;
+            m_IsAlive = true;
+            m_RowIndex = i_Height;
+            m_ColIndex = i_Width; 
         }
 
        public ePieceKind PieceKind
@@ -46,11 +48,19 @@ namespace CheckersPiece
             }
         }
 
+        public bool IsAlive
+        {
+            get
+            {
+                return m_IsAlive;
+            }
+        }
+
         public int Height
         {
             get
             {
-                return m_Height;
+                return m_RowIndex;
             }
         }
 
@@ -58,19 +68,19 @@ namespace CheckersPiece
         {
             get
             {
-                return m_width;
+                return m_ColIndex;
             }
         }
 
-        private void gotToOtherSideOfBoard(ref Board i_CheckersBoard)
+        public void GotToOtherSideOfBoard(ref Board i_CheckersBoard)
         {
-            if(this.PieceKind == ePieceKind.X && m_Height == 0 
-              || this.PieceKind == ePieceKind.O && m_Height == (uint)i_CheckersBoard.SizeOfBoard)
+            if(this.PieceKind == ePieceKind.X && m_RowIndex == 0 
+              || this.PieceKind == ePieceKind.O && m_RowIndex == (uint)i_CheckersBoard.SizeOfBoard)
             {
                 this.becomeKing();
             }
         }
-       public void becomeKing()
+       private void becomeKing()
         {
             if(m_PieceKind == ePieceKind.X)
             {
@@ -82,6 +92,16 @@ namespace CheckersPiece
             }
 
             m_IsKing = true;
+        }
+        public void Die()
+        {
+            m_IsAlive = false;
+        }
+
+        public void changePosition(int i_NewRowIndex,int  i_NewColIndex)
+        {
+            m_RowIndex = i_NewRowIndex;
+            m_ColIndex = i_NewColIndex;
         }
       
 
