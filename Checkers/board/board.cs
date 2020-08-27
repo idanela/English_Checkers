@@ -11,7 +11,9 @@ namespace CheckersBoard
             Large = 10
         }
 
-        private char[,] m_CheckersBoard;
+        private const char k_BlankChecker = ' '; // constant.
+
+        private readonly char[,] m_CheckersBoard;
         private eBoardSize m_SizeOfBoard;
         public Board(eBoardSize i_SizeOfBoard)
         {
@@ -32,6 +34,13 @@ namespace CheckersBoard
             }
         }
 
+        public char[,] CheckersBoard
+        {
+            get
+            {
+                return m_CheckersBoard;
+            }
+        }
         private void initializeBoard()
         {
             makeEmptyBoard();
@@ -133,7 +142,7 @@ namespace CheckersBoard
             int height;
             int width = getIndexInBoard(ref i_Move, out height);
 
-            return isCheckerValid(height, width) && m_CheckersBoard[height, width] == ' ';             
+            return isCheckerValid(height, width) && m_CheckersBoard[height, width] == k_BlankChecker;             
         }
        
         private int getIndexInBoard(ref string i_Move, out int o_Height)

@@ -18,12 +18,12 @@ namespace CheckersPiece
         int m_width;
 
 
-        public CheckersPiece(ePieceKind i_PieceKind)
+        public CheckersPiece(ePieceKind i_PieceKind, int i_Height , int i_Width)
         {
             m_PieceKind = i_PieceKind;
             m_IsKing = false;
-            m_Height = 0;
-            m_width = 0; 
+            m_Height = i_Height;
+            m_width = i_Width; 
         }
 
        public ePieceKind PieceKind
@@ -38,6 +38,29 @@ namespace CheckersPiece
             }
         }
 
+        public bool IsKing
+        {
+            get
+            {
+                return IsKing;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return m_Height;
+            }
+        }
+
+        public int width
+        {
+            get
+            {
+                return m_width;
+            }
+        }
 
         private void gotToOtherSideOfBoard(ref Board i_CheckersBoard)
         {
@@ -45,10 +68,9 @@ namespace CheckersPiece
               || this.PieceKind == ePieceKind.O && m_Height == (uint)i_CheckersBoard.SizeOfBoard)
             {
                 this.becomeKing();
-           
             }
         }
-       private void becomeKing()
+       public void becomeKing()
         {
             if(m_PieceKind == ePieceKind.X)
             {
