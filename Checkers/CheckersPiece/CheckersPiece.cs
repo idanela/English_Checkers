@@ -5,12 +5,10 @@ namespace CheckersPiece
    public struct CheckersPiece
     {
         private ePieceKind m_PieceKind;
-        private static uint s_NumOfPieces;
 
         public CheckersPiece(ePieceKind i_PieceKind)
         {
             m_PieceKind = i_PieceKind;
-            s_NumOfPieces++;
         }
 
        public ePieceKind PieceKind
@@ -22,14 +20,6 @@ namespace CheckersPiece
             set
             {
                 m_PieceKind = value;
-            }
-        }
-
-        public static uint NumOfPieces
-        {
-            get
-            {
-                return s_NumOfPieces ;
             }
         }
 

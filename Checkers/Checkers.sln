@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "board", "board\board.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckersPiece", "CheckersPiece\CheckersPiece.csproj", "{45597830-EBC8-44EF-8A68-58FB21A76C63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Player", "Player\Player.csproj", "{B5F2A7A7-3651-493F-A75F-CB63518B0F1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{45597830-EBC8-44EF-8A68-58FB21A76C63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45597830-EBC8-44EF-8A68-58FB21A76C63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45597830-EBC8-44EF-8A68-58FB21A76C63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5F2A7A7-3651-493F-A75F-CB63518B0F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5F2A7A7-3651-493F-A75F-CB63518B0F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5F2A7A7-3651-493F-A75F-CB63518B0F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5F2A7A7-3651-493F-A75F-CB63518B0F1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
