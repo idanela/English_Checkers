@@ -146,7 +146,7 @@ namespace CheckersBoard
         private bool isCheckerValid(int i_Height, int i_Width)
         {
             return i_Width < (uint)m_SizeOfBoard && i_Width >= 0 || i_Height < (uint)m_SizeOfBoard && i_Height >= 0;
-                }
+        }
 
     }
 }
