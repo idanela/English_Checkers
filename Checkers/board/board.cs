@@ -1,26 +1,135 @@
 ﻿using System;
-namespace board
+using System.Text;
+namespace CheckersBoard
 {
     public class Board
     {
-        private char[,] m_CheckersBoard;
-        uint m_SizeOfBoard;
-        public Board(uint i_Size)
+        public enum eBoardSize
         {
-            m_CheckersBoard = new char [i_Size, i_Size];
-            m_SizeOfBoard= i_Size;
+            Small = 6,
+            Medium = 8,
+            Large = 10
         }
 
-        private void initializeBoard(int i_SizeOfBoard)
+        private char[,] m_CheckersBoard;
+        eBoardSize m_SizeOfBoard;
+        public Board(eBoardSize i_SizeOfBoard)
         {
-          
+            m_CheckersBoard = new char[(uint)i_SizeOfBoard, (uint)i_SizeOfBoard];
+            m_SizeOfBoard = i_SizeOfBoard;
+            this.initializeBoard();
         }
-            
-        private void initializePlayersLine(uint numOfLine, char playerSign )
+        public eBoardSize SizeOfBoard
         {
-            
+            get
+            {
+                return m_SizeOfBoard;
+            }
+
+            set
+            {
+                m_SizeOfBoard = value;
+            }
         }
-        
-        
+
+        private void initializeBoard()
+        {
+            makeEmptyBoard();
+            placePlayers();
+        }
+        private void makeEmptyBoard()
+        {
+            for (int i = 0; i < (uint)m_SizeOfBoard; i++)
+            {
+                for (int j = 0; j < (uint)m_SizeOfBoard; j++)
+                {
+                    m_CheckersBoard[i, j] = ' ';
+                }
+            }
+        }
+
+        private void  placePlayers()
+        {
+            int i = 0;
+            while((uint)m_SizeOfBoard - 1 - i != i+1)
+            {
+               for(int j = 0; j < (uint)m_SizeOfBoard; j++)
+                {
+                    if(i % 2 == 0)
+                    {
+                        if(j % 2 != 0)
+                        {
+                            m_CheckersBoard[i,j] = 'O';
+                        }
+                        else
+                        {
+                            m_CheckersBoard[(uint)m_SizeOfBoard - 1 - i, j] = 'X';
+                        }
+                    }
+                    else
+                    {
+                        if (j % 2 == 0)
+                        {
+                            m_CheckersBoard[i, j] = 'O';
+                        }
+                        else
+                        {
+                            m_CheckersBoard[(uint)m_SizeOfBoard - 1 - i, j] = 'X';
+                        }
+                    }
+                }
+
+                i++;
+            }
+        }
+
+          public void printBoard()
+          {
+            string LineString = createLineString((uint)m_SizeOfBoard);
+            char leftIndex = 'a';
+            StringBuilder Board = new StringBuilder(leftIndex + '|');
+            printTopindex((uint)m_SizeOfBoard);
+            for (int i = 0; i < (uint)m_SizeOfBoard; i++)
+            {
+                Board.AppendFormat(Environment.NewLine + LineString + Environment.NewLine + leftIndex + "|");
+                for (int j = 0; j < (uint)m_SizeOfBoard; j++)
+                {
+                   Board.AppendFormat(" " + m_CheckersBoard[i, j] + " |");
+                }
+                leftIndex++;
+            }
+
+            Console.WriteLine(Board);
+        }
+
+        public static void printTopindex(uint i_SizeOfBoard)
+        {
+            char letterIndex = 'G';
+            StringBuilder indexesLine = new StringBuilder("   A   B   C   D   E   F   ");
+
+            for (int i = 6; i < i_SizeOfBoard; i++)
+            {
+                indexesLine.Append(letterIndex + "   ");
+                letterIndex++;
+            }
+
+            Console.Write(indexesLine);
+        }
+
+        private static string createLineString(uint i_SizeOfBoard)
+        {
+            StringBuilder EqualsLine = new StringBuilder("=========================");
+
+            for(int i = 6; i < i_SizeOfBoard; i++)
+            {
+                EqualsLine.Append("====");
+            }
+
+            return EqualsLine.ToString();
+        }
+
+
+       
+
     }
 }

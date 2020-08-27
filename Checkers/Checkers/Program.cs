@@ -1,12 +1,14 @@
 ﻿using System;
+using CheckersBoard;
 
 namespace Checkers
 {
     public class Program
     {
-        void main()
+        public static void Main()
         {
-           
+            Board board = new Board((Board.eBoardSize) 10);
+            board.printBoard();
         }
     }
 }
