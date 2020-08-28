@@ -20,13 +20,13 @@ namespace CheckerPiece
         private ushort m_RowIndex;
         private ushort m_ColIndex;
 
-        public CheckersPiece(ePieceKind i_PieceKind, ushort i_Height, ushort i_Width) // Constructor.
+        public CheckersPiece(ePieceKind i_PieceKind, ushort i_RowIndex, ushort i_ColIndex) // Constructor.
         {
             m_IsKing = false;
             m_PieceKind = i_PieceKind;
             m_IsAlive = true;
-            m_RowIndex = i_Height;
-            m_ColIndex = i_Width; 
+            m_RowIndex = i_RowIndex;
+            m_ColIndex = i_ColIndex; 
         }
 
         // Prpoerties
@@ -59,19 +59,19 @@ namespace CheckerPiece
             }
         }
 
-        public int Height
-        {
-            get
-            {
-                return m_RowIndex;
-            }
-        }
-
-        public int width
+        public ushort ColIndex
         {
             get
             {
                 return m_ColIndex;
+            }
+        }
+
+        public ushort RowIndex
+        {
+            get
+            {
+                return m_RowIndex;
             }
         }
 
