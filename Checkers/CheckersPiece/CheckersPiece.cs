@@ -59,7 +59,7 @@ namespace CheckerPiece
             }
         }
 
-        public int Height
+        public ushort RowIndex
         {
             get
             {
@@ -67,7 +67,7 @@ namespace CheckerPiece
             }
         }
 
-        public int width
+        public ushort ColIndex
         {
             get
             {
