@@ -1,5 +1,6 @@
 ﻿using System;
 using CheckersBoard;
+
 namespace CheckerPiece
 {
    public struct CheckersPiece
@@ -14,13 +15,12 @@ namespace CheckerPiece
 
         // Members
         private bool m_IsKing;
-        public ePieceKind m_PieceKind;
-        bool m_IsAlive;
-        ushort m_RowIndex;
-        ushort m_ColIndex;
+        private ePieceKind m_PieceKind;
+        private bool m_IsAlive;
+        private ushort m_RowIndex;
+        private ushort m_ColIndex;
 
-
-        public CheckersPiece(ePieceKind i_PieceKind, ushort i_Height , ushort i_Width) // Constructor.
+        public CheckersPiece(ePieceKind i_PieceKind, ushort i_Height, ushort i_Width) // Constructor.
         {
             m_IsKing = false;
             m_PieceKind = i_PieceKind;
@@ -36,6 +36,7 @@ namespace CheckerPiece
             {
                 return m_PieceKind;
             }
+
             set
             {
                 m_PieceKind = value;
@@ -76,12 +77,13 @@ namespace CheckerPiece
 
         public void GotToOtherSideOfBoard(ref Board i_CheckersBoard) // Checks if a checker piece need to become a king.
         {
-            if(this.PieceKind == ePieceKind.X && m_RowIndex == 0 
-              || this.PieceKind == ePieceKind.O && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1)
+            if((this.PieceKind == ePieceKind.X && m_RowIndex == 0) 
+              || (this.PieceKind == ePieceKind.O && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1))
             {
                 this.becomeKing();
             }
         }
+
        private void becomeKing() // makes a checker piece a king.
         {
             if(m_PieceKind == ePieceKind.X)
@@ -95,12 +97,13 @@ namespace CheckerPiece
 
             m_IsKing = true;
         }
+
         public void Die() // "Kill" a checker piece. 
         {
             m_IsAlive = false;
         }
 
-        public void changePosition(ushort i_NewRowIndex,ushort  i_NewColIndex) // Changes a piece location.
+        public void changePosition(ushort i_NewRowIndex, ushort i_NewColIndex) // Changes a piece location.
         {
             m_RowIndex = i_NewRowIndex;
             m_ColIndex = i_NewColIndex;
