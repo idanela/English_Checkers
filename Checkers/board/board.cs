@@ -97,25 +97,26 @@ namespace CheckersBoard
             }
         }
 
-          public void printBoard() // print game Board
+          public void printBoard() // Prints game Board.
           {
             string LineString = createLineString((uint)m_SizeOfBoard);
             char leftIndex = 'a';
             StringBuilder Board = new StringBuilder(leftIndex + '|');
-            printTopindex((uint)m_SizeOfBoard);
-            for (int i = 0; i < (uint)m_SizeOfBoard; i++)
+
+            printTopindex((uint)m_SizeOfBoard); // Prints the top indexes for the Board.
+            for (int i = 0; i < (uint)m_SizeOfBoard; i++) // add to StringBuilder equal line to seperate rows and row indexes.
             {
                 Board.AppendFormat(@"
 {0}
 {1}|",LineString,leftIndex);
-                for (int j = 0; j < (uint)m_SizeOfBoard; j++)
+                for (int j = 0; j < (uint)m_SizeOfBoard; j++) // add to stringBuilder Checker with it's content(X,Y or blank).
                 {
                    Board.AppendFormat(" {0} |" , m_CheckersBoard[i, j]);
                 }
-                leftIndex++;
+                leftIndex++; // Increases the row index. 
             }
 
-            Console.WriteLine(Board);
+            Console.WriteLine(Board); 
         }
 
         public static void printTopindex(uint i_SizeOfBoard) // prints top indexes of the board 
@@ -123,6 +124,7 @@ namespace CheckersBoard
             char letterIndex = 'G';
             StringBuilder indexesLine = new StringBuilder("   A   B   C   D   E   F   ");
 
+            // Adding Top Indexes According to the size of the board.
             for (int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
             {
                 indexesLine.AppendFormat("{0}   ",letterIndex);
@@ -132,11 +134,12 @@ namespace CheckersBoard
             Console.Write(indexesLine);
         }
 
-        private static string createLineString(uint i_SizeOfBoard) // creates the line that seperates between to checkers.
+        private static string createLineString(uint i_SizeOfBoard) // creates the line that seperates between two checker's rows.
         {
             StringBuilder EqualsLine = new StringBuilder(" ========================");
 
-            for(int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
+            // Adding equal signs According to the size of the board.
+            for (int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
             {
                 EqualsLine.Append("====");
             }
@@ -178,7 +181,7 @@ namespace CheckersBoard
         }    
         
         // Update the board after a checker piece eat another.
-            private void updateAfterEating(int i_row, int i_col,int i_newRow,int i_NewCol, int i_RowTokill, int i_ColTokill )
+        private void updateAfterEating(int i_row, int i_col,int i_newRow,int i_NewCol, int i_RowTokill, int i_ColTokill )
         {
             updateBoardAccordingToPlayersMove(i_row, i_col, i_newRow, i_NewCol);
             clearPositionOfDeadCheckerPiece(i_RowTokill, i_ColTokill);
