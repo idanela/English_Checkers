@@ -16,11 +16,11 @@ namespace CheckerPiece
         private bool m_IsKing;
         public ePieceKind m_PieceKind;
         bool m_IsAlive;
-        int m_RowIndex;
-        int m_ColIndex;
+        ushort m_RowIndex;
+        ushort m_ColIndex;
 
 
-        public CheckersPiece(ePieceKind i_PieceKind, int i_Height , int i_Width) // Constructor.
+        public CheckersPiece(ePieceKind i_PieceKind, ushort i_Height , ushort i_Width) // Constructor.
         {
             m_IsKing = false;
             m_PieceKind = i_PieceKind;
@@ -77,7 +77,7 @@ namespace CheckerPiece
         public void GotToOtherSideOfBoard(ref Board i_CheckersBoard) // Checks if a checker piece need to become a king.
         {
             if(this.PieceKind == ePieceKind.X && m_RowIndex == 0 
-              || this.PieceKind == ePieceKind.O && m_RowIndex == (uint)i_CheckersBoard.SizeOfBoard)
+              || this.PieceKind == ePieceKind.O && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1)
             {
                 this.becomeKing();
             }
@@ -95,12 +95,12 @@ namespace CheckerPiece
 
             m_IsKing = true;
         }
-        public void CheckerDie() // "Kill" a checker piece. 
+        public void Die() // "Kill" a checker piece. 
         {
             m_IsAlive = false;
         }
 
-        public void changePosition(int i_NewRowIndex,int  i_NewColIndex) // Changes a piece location.
+        public void changePosition(ushort i_NewRowIndex,ushort  i_NewColIndex) // Changes a piece location.
         {
             m_RowIndex = i_NewRowIndex;
             m_ColIndex = i_NewColIndex;

@@ -9,6 +9,7 @@ namespace Checkers
         {
             Board board = new Board((Board.eBoardSize) 10);
             board.printBoard();
+            board.UpdateBoardAccordingToPlayersMove(6, 1, 5, 0);
             CheckerPiece.CheckersPiece ch= new CheckerPiece.CheckersPiece();
             ch.GotToOtherSideOfBoard(ref board);
         }
