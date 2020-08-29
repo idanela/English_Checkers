@@ -47,7 +47,7 @@ namespace CheckerPiece
         {
             get
             {
-                return IsKing;
+                return m_IsKing;
             }
         }
 
