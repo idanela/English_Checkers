@@ -7,11 +7,7 @@ namespace Checkers
     {
         public static void Main()
         {
-            Board board = new Board(10);
-            board.printBoard();
-            board.UpdateBoardAccordingToPlayersMove(6, 1, 5, 0);
-            CheckerPiece.CheckersPiece ch= new CheckerPiece.CheckersPiece();
-            ch.GotToOtherSideOfBoard(ref board);
+            Game.CheckersGame.runGame();
         }
     }
 }

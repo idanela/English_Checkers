@@ -163,12 +163,12 @@ leftIndex);
         public bool IsCheckerAvailable(string i_Move) // Checks if a checker is possible to go to.
         {
             ushort colIndex;
-            ushort rowIndex = getIndexInBoard(ref i_Move, out colIndex);
+            ushort rowIndex = GetIndexInBoard(ref i_Move, out colIndex);
 
             return isCheckerValidPosition(rowIndex, colIndex) && m_CheckersBoard[rowIndex, colIndex] == k_BlankChecker;
         }
 
-        private ushort getIndexInBoard(ref string i_DestinationChecker, out ushort o_colIndex) // Gets an index according to the name of checker. 
+        public ushort GetIndexInBoard(ref string i_DestinationChecker, out ushort o_colIndex) // Gets an index according to the name of checker. 
         {
             o_colIndex = (ushort)(i_DestinationChecker[0] - 'A');
             return (ushort)(i_DestinationChecker[1] - 'a');

@@ -50,6 +50,10 @@
       <Project>{45597830-ebc8-44ef-8a68-58fb21a76c63}</Project>
       <Name>CheckersPiece</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Game\Game.csproj">
+      <Project>{f771181b-4ef8-43aa-b42d-91718828f2cf}</Project>
+      <Name>Game</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
