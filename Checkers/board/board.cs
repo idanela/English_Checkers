@@ -199,9 +199,9 @@ leftIndex);
             DeleteCheckerPieceFromBoard(i_RowTokill, i_ColTokill);
         }
         
-        public bool isValidBoardSize()
+        public static bool isValidBoardSize( ushort i_SizeOfBoard)
         {
-            return m_SizeOfBoard == 6 || m_SizeOfBoard == 8 || m_SizeOfBoard == 10;
+            return i_SizeOfBoard == 6 || i_SizeOfBoard == 8 || i_SizeOfBoard == 10;
         }
 
 
