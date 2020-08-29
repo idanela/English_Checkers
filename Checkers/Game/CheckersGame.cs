@@ -45,7 +45,7 @@ namespace Game
         private static void getValidchoice(string PlayerChoice)
         {
             char choice;
-            while(  char.TryParse(PlayerChoice, out choice) || choice != '1' || choice != '2')
+            while(  !char.TryParse(PlayerChoice, out choice) || choice != '1' || choice != '2')
             {
                 Console.WriteLine("invalid choice. please try again:");
                 PlayerChoice = Console.ReadLine();
