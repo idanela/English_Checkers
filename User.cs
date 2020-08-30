@@ -1,5 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Permissions;
 using CheckerPiece;
 using CheckersBoard;
 
@@ -11,13 +16,17 @@ namespace Player
         private const char k_Quit = 'Q';
         private const char k_Yes = 'Y';
         private const char k_Empty = ' ';
+        private const short k_RowIndex = 1;
+        private const short k_ColIndex = 0;
 
         // Data members:
         private readonly string m_Name;
         private ushort m_Score;
-        private static CheckersPiece[] m_CheckersPiece;
-        private readonly char m_CheckerPieceKind;
-        private readonly short m_PlayerNumber;
+        private CheckersPiece[] m_CheckersPiece;
+        private readonly CheckersPiece.ePieceKind m_CheckerPieceKind;
+        private readonly ePlayerType m_PlayerNumber;
+        private Dictionary<string, List<string>> m_Moves;
+        private CheckersPiece m_CurrentCheckerPiece;
 
         // Enums:
         public enum ePlayerType
@@ -28,12 +37,15 @@ namespace Player
 
 
         // Constructors:
-        public User(string i_Name, short i_PlayerNumber, char i_CheckerKind)
+        public User(string i_Name, ePlayerType i_PlayerNumber, CheckersPiece.ePieceKind i_CheckerKind)
         {
             m_Name = i_Name;
             m_Score = 0;
+            m_CheckersPiece = null;
             m_CheckerPieceKind = i_CheckerKind;
             m_PlayerNumber = i_PlayerNumber;
+            m_Moves = null;
+            m_CurrentCheckerPiece = null;
         }
 
         // Properties:
@@ -65,7 +77,7 @@ namespace Player
             }
         }
 
-        public char CheckerKind
+        public CheckersPiece.ePieceKind CheckerKind
         {
             get
             {
@@ -73,57 +85,242 @@ namespace Player
             }
         }
 
+        public ePlayerType PlayerNumber
+        {
+            get
+            {
+                return m_PlayerNumber;
+            }
+        }
+
+        public Dictionary<string, List<string>> Moves
+        {
+            get
+            {
+                return m_Moves;
+            }
+        }
+
 
         // Methods:
-        public static void InitializeCheckersArray(int i_BoardSize)
+        public void InitializeCheckersArray(int i_BoardSize)
         {
             int sizeOfPieces = ((i_BoardSize / 2) * 3);
 
             m_CheckersPiece = new CheckersPiece[sizeOfPieces];
         }
 
-        public void Play(ref Board i_GameBoard, User i_RivalPlayer , string i_CheckerPosition, string i_CheckerNextPosition)
+        public void GetAndCalculateScore()
         {
-            // First, check if the given input is valid.
-            Validation.CheckValidInput(Name,
-                ref i_CheckerPosition,
-                ref i_CheckerNextPosition, 
-                (int)i_GameBoard.SizeOfBoard);
-
-            // Second, finds the match checker piece, with it's position.
-            CheckersPiece? currentCheckerPiece = findCheckerPiece(i_CheckerPosition);
-
-            // Checks if the checker piece was found.
-            if (currentCheckerPiece != null)
+            foreach (CheckersPiece checkersPiece in Pieces)
             {
-                // Make the moves that the user wanted. Regular move or King move.
-                if (!currentCheckerPiece.Value.IsKing)
+                if (checkersPiece.IsKing)
                 {
-                    MoveUtils.MoveRegularTool(this, i_RivalPlayer,
-                                              ref i_GameBoard,
-                                              currentCheckerPiece.Value,
-                                              i_CheckerNextPosition);
+                    m_Score += 4;
                 }
                 else
                 {
-                    MoveUtils.MoveKingTool(i_CheckerPosition, i_CheckerNextPosition);
+                    m_Score++;
                 }
             }
         }
 
-        private static CheckersPiece? findCheckerPiece(string i_CurrentPosition)
+        public void MakeToolAKing(Board i_GameBoard, ref CheckersPiece i_CurrentCheckerPiece)
         {
-            CheckersPiece? currentCheckerPiece = null;
-
-            foreach (var piece in m_CheckersPiece)
+            if (PlayerNumber == ePlayerType.MainPlayer)
             {
-                // if piece.position == i_CurrentPosition
-                // currentCheckerPiece = piece;
+                if (hasReachedFinalRowUp(i_CurrentCheckerPiece.RowIndex))
+                {
+                    i_CurrentCheckerPiece.BecomeKing();
+                }
             }
-
-            return currentCheckerPiece;
+            else
+            {
+                if (hasReachedFinalRowDown(i_GameBoard.SizeOfBoard, i_CurrentCheckerPiece.RowIndex))
+                {
+                    i_CurrentCheckerPiece.BecomeKing();
+                }
+            }
         }
 
+        private static bool hasReachedFinalRowDown(ushort i_BoardSize, ushort i_CurrentRow)
+        {
+            return i_CurrentRow == i_BoardSize - 1;
+        }
+
+        private static bool hasReachedFinalRowUp(ushort i_CurrentRow)
+        {
+            return i_CurrentRow == 0;
+        }
+
+        public void MakeMove(ref Board i_GameBoard, string i_PositionFrom, string i_PositionTo)
+        {
+            ushort rowIndex = (ushort) (i_PositionFrom[k_RowIndex] - 'a');
+            ushort colIndex = (ushort)(i_PositionFrom[k_ColIndex] - 'A');
+            bool isCheckerUpdated = isCheckerFoundAndUpdate(rowIndex, colIndex);
+
+            if (isCheckerUpdated)
+            {
+                if (!m_CurrentCheckerPiece.IsKing)
+                {
+                    MoveUtils.MoveRegularTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, i_PositionFrom, i_PositionTo);
+                }
+                else
+                {
+                    MoveUtils.MoveKingTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, i_PositionFrom, i_PositionTo);
+                }
+            }
+        }
+
+        public void MakeComputerMove(ref Board i_GameBoard)
+        {
+            string positionFrom = randomPositionFrom(ref i_GameBoard);
+            string positionTo = randomPositionTo(ref i_GameBoard);
+
+            if (!m_CurrentCheckerPiece.IsKing)
+            {
+                MoveUtils.MoveRegularTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, positionFrom, positionTo);
+            }
+            else
+            {
+                MoveUtils.MoveKingTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, positionFrom, positionTo);
+            }
+        }
+
+        private string randomPositionFrom(ref Board i_GameBoard)
+        {
+            ushort rowIndex = (ushort) new Random().Next(i_GameBoard.SizeOfBoard - 1);
+            ushort colIndex = (ushort)new Random().Next(i_GameBoard.SizeOfBoard - 1);
+
+            while (!Validation.IsValidPosition(i_GameBoard.SizeOfBoard, rowIndex, colIndex) &&
+                   !isCheckerFoundAndUpdate(rowIndex, colIndex))
+            {
+                rowIndex = (ushort)new Random().Next(i_GameBoard.SizeOfBoard - 1);
+                colIndex = (ushort)new Random().Next(i_GameBoard.SizeOfBoard - 1);
+            }
+
+            char[] position = new char[2];
+            position[0] = (char) (m_CurrentCheckerPiece.RowIndex + 'a');
+            position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A');
+
+            return new string(position);
+        }
+
+        private string randomPositionTo(ref Board i_GameBoard)
+        {
+            string positionTo = null;
+            char[] position = new char[2];
+
+            // Down
+            if (CheckerKind == CheckersPiece.ePieceKind.O)
+            {
+                if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex + 1, m_CurrentCheckerPiece.ColIndex + 1] != 'O' &&
+                    i_GameBoard.IsCheckerAvailable((ushort) (m_CurrentCheckerPiece.RowIndex + 2),
+                        (ushort)(m_CurrentCheckerPiece.ColIndex + 2)))
+                {
+                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' + 2);
+                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' + 2);
+                    positionTo = new string(position);
+                }
+                else if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex + 1,
+                             m_CurrentCheckerPiece.ColIndex - 1] != 'O' &&
+                         i_GameBoard.IsCheckerAvailable((ushort) (m_CurrentCheckerPiece.RowIndex + 2),
+                             (ushort) (m_CurrentCheckerPiece.ColIndex - 2)))
+                {
+                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' + 2);
+                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' - 2);
+                    positionTo = new string(position);
+                }
+            }
+            else
+            {
+                if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex - 1, m_CurrentCheckerPiece.ColIndex + 1] != 'X' &&
+                    i_GameBoard.IsCheckerAvailable((ushort)(m_CurrentCheckerPiece.RowIndex + 2),
+                        (ushort)(m_CurrentCheckerPiece.ColIndex + 2)))
+                {
+                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' - 2);
+                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' + 2);
+                    positionTo = new string(position);
+                }
+                else if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex - 1,
+                             m_CurrentCheckerPiece.ColIndex - 1] != 'O' &&
+                         i_GameBoard.IsCheckerAvailable((ushort)(m_CurrentCheckerPiece.RowIndex + 2),
+                             (ushort)(m_CurrentCheckerPiece.ColIndex - 2)))
+                {
+                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' - 2);
+                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' - 2);
+                    positionTo = new string(position);
+                }
+            }
+
+            return positionTo;
+        }
+
+        private bool isCheckerFoundAndUpdate(ushort i_RowIndex, ushort i_ColIndex)
+        {
+            bool isFound = false;
+
+            foreach (CheckersPiece checkerPiece in Pieces)
+            {
+                if (CaptureUtils.isSamePosition(checkerPiece, i_RowIndex, i_ColIndex))
+                {
+                    m_CurrentCheckerPiece = checkerPiece;
+                    isFound = true;
+                }
+            }
+
+            return isFound;
+        }
+
+        public void MakeCapture(Board i_GameBoard, ref CheckersPiece i_CurrentCheckerPiece, ref string i_PositionTo,
+                                ref CheckersPiece i_RivalCheckerPiece)
+        {
+            CaptureUtils.CaptureRivalCheckerPiece(i_GameBoard, ref i_CurrentCheckerPiece,
+                                                  ref i_PositionTo, ref i_RivalCheckerPiece);
+            m_CurrentCheckerPiece = i_CurrentCheckerPiece;
+        }
+
+        public bool UpdateAndGetMoves(Board i_GameBoard, User i_RivalPlayer)
+        {
+            bool canCapture = true;
+
+            // If the current checker didn't make a move the turn before.
+            if (m_CurrentCheckerPiece == null)
+            {
+                // If the user can eat, he must! the list will reture as ref value. If not, the list will return the regular moves list.
+                if (!CaptureUtils.CanUserCapture(i_GameBoard, this, i_RivalPlayer, ref m_Moves))
+                {
+                    m_Moves = MoveUtils.CreateRegularMoves(this, i_GameBoard);
+                    canCapture = false;
+                }
+            }
+            // If there's a "soldier" that can capture again.
+            else
+            {
+                m_Moves = createCaptureMoveList(i_GameBoard, i_RivalPlayer);
+            }
+
+            return canCapture;
+        }
+
+        // Certain Tool's Capture Move List:
+        private Dictionary<string, List<string>> createCaptureMoveList(Board i_GameBoard, User i_RivalPlayer)
+        {
+            Dictionary<string, List<string>> captureList = new Dictionary<string, List<string>>();
+
+            if (m_PlayerNumber == ePlayerType.MainPlayer)
+            {
+                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+            }
+            else
+            {
+                CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+            }
+
+            return captureList;
+        }
+
+        // This method probably should be under 'Game'!!
         public static void Quit(char i_QuitInput)
         {
             // Quit the game if the user press 'Q'.
