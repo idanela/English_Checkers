@@ -160,12 +160,9 @@ leftIndex);
             }
         }
 
-        public bool IsCheckerAvailable(string i_Move) // Checks if a checker is possible to go to.
+        public bool IsCheckerAvailable(ushort i_RowIndex, ushort i_ColIndex) // Checks if a checker is possible to go to.
         {
-            ushort colIndex;
-            ushort rowIndex = GetIndexInBoard(ref i_Move, out colIndex);
-
-            return isCheckerValidPosition(rowIndex, colIndex) && m_CheckersBoard[rowIndex, colIndex] == k_BlankChecker;
+            return isCheckerValidPosition(i_RowIndex, i_ColIndex) && m_CheckersBoard[i_RowIndex, i_ColIndex] == k_BlankChecker;
         }
 
         public ushort GetIndexInBoard(ref string i_DestinationChecker, out ushort o_colIndex) // Gets an index according to the name of checker. 
