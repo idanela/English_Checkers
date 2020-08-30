@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F771181B-4EF8-43AA-B42D-91718828F2CF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Game</RootNamespace>
-    <AssemblyName>Game</AssemblyName>
+    <ProjectGuid>{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>UI</RootNamespace>
+    <AssemblyName>UI</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,27 +32,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CheckersGame.cs" />
+    <Compile Include="UserIntterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\board\board.csproj">
       <Project>{21f0f380-d8fa-42bd-9f71-91451aa0914e}</Project>
       <Name>board</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Player\Player.csproj">
-      <Project>{b5f2a7a7-3651-493f-a75f-cb63518b0f1d}</Project>
-      <Name>Player</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UI\UI.csproj">
-      <Project>{ea737ba6-7a06-4c0c-9c53-935cae5329bf}</Project>
-      <Name>UI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

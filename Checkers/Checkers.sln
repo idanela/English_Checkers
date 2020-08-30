@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Player", "Player\Player.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{F771181B-4EF8-43AA-B42D-91718828F2CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F771181B-4EF8-43AA-B42D-91718828F2CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F771181B-4EF8-43AA-B42D-91718828F2CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F771181B-4EF8-43AA-B42D-91718828F2CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
