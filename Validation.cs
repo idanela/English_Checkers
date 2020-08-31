@@ -1,7 +1,4 @@
 using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using CheckerPiece;
 using CheckersBoard;
 
@@ -87,7 +84,7 @@ namespace Player
                 UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
             }
 
-            if (i_CurrentPlayer.CheckerKind == CheckersPiece.ePieceKind.O/*CheckersPiece.ePieceKind.O*/)
+            if (i_CurrentPlayer.CheckerKind == CheckersPiece.ePieceKind.SecondPlayerKing/*CheckersPiece.ePieceKind.O*/)
             {
                 // The current player can move only down and in diagonal move.
                 checkCorrectMoveWayDown(i_CurrentCheckerPiece, ref io_PositionFrom, ref io_PositionTo, i_CurrentPlayer.Name);
@@ -188,7 +185,7 @@ namespace Player
             string move = null;
 
             // Pass position from parameter, and change msg.
-            Console.WriteLine("Please enter the destination you want to move to.");
+            Console.WriteLine("Please enter where you want to move.");
             Console.Write(i_Name + "'s turn: ");
             move = Console.ReadLine();
             ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
