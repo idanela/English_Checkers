@@ -22,6 +22,7 @@ namespace UI
 
             return playerName;
         }
+
             private static bool IsValidUserName(string nameOfPlayer)
             {
                 bool isValidName = nameOfPlayer.Length > 20 && nameOfPlayer.Length > 0;
@@ -81,6 +82,14 @@ namespace UI
             }
 
             return choice;
+        }
+
+        public static bool WouldLikeToPlayAgain()
+        {
+            Console.WriteLine("To play Again press '1' otherwise press '2'.");
+            char WouldLikeToPlayAgain = getValidchoice(Console.ReadLine());
+
+            return WouldLikeToPlayAgain == '1';
         }
     }
 }
