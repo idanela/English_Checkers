@@ -1,10 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Permissions;
 using CheckerPiece;
 using CheckersBoard;
 
@@ -18,15 +13,20 @@ namespace Player
         private const char k_Empty = ' ';
         private const short k_RowIndex = 1;
         private const short k_ColIndex = 0;
+        private const char k_MoveUp = 'X';
+        private const char k_MoveDown = 'O';
+        private const char k_MoveUpKing = 'K';
+        private const char k_MoveDownKing = 'U';
 
         // Data members:
         private readonly string m_Name;
         private ushort m_Score;
         private CheckersPiece[] m_CheckersPiece;
-        private readonly CheckersPiece.ePieceKind m_CheckerPieceKind;
+        private CheckersPiece.ePieceKind m_CheckerPieceKind;
+        private CheckersPiece m_CurrentCheckerPiece;
         private readonly ePlayerType m_PlayerNumber;
         private Dictionary<string, List<string>> m_Moves;
-        private CheckersPiece m_CurrentCheckerPiece;
+        private readonly bool m_IsComputer;
 
         // Enums:
         public enum ePlayerType
@@ -37,15 +37,17 @@ namespace Player
 
 
         // Constructors:
-        public User(string i_Name, ePlayerType i_PlayerNumber, CheckersPiece.ePieceKind i_CheckerKind)
+        public User(string i_Name, ePlayerType i_PlayerNumber, bool i_IsComputer)
         {
             m_Name = i_Name;
             m_Score = 0;
             m_CheckersPiece = null;
-            m_CheckerPieceKind = i_CheckerKind;
             m_PlayerNumber = i_PlayerNumber;
+            m_CheckerPieceKind = i_PlayerNumber == ePlayerType.MainPlayer ?
+            CheckersPiece.ePieceKind.MainPlayerTool : CheckersPiece.ePieceKind.SecondPlayerMainTool;
             m_Moves = null;
             m_CurrentCheckerPiece = null;
+            m_IsComputer = i_IsComputer;
         }
 
         // Properties:
@@ -101,46 +103,93 @@ namespace Player
             }
         }
 
-        // Methods:
-        public void InitializeCheckersArray(Board i_GameBoard)
+        public bool IsComputer
         {
-            int numOfPieces = ((i_GameBoard.SizeOfBoard / 2) * 3);
-            int starIndex = 0;
-            m_CheckersPiece = new CheckersPiece[numOfPieces];
-            if(m_CheckerPieceKind == CheckersPiece.ePieceKind.MainPlayerTool)
+            get
             {
-                starIndex = i_GameBoard.SizeOfBoard - 1;
+                return m_IsComputer;
             }
-            this.ininitializePositions(starIndex, i_GameBoard);
         }
 
-        public void ininitializePositions(int startIndex, Board i_GameBoard)
-        {
-            ushort chekerPieceIndex = 0;
 
-            for (int k = 0; k  <m_CheckersPiece.Length; k++)
+        // Methods:
+        public void InitializeCheckersArray(ushort i_BoardSize)
+        {
+            int sizeOfPieces = ((i_BoardSize / 2) * 3);
+
+            m_CheckersPiece = new CheckersPiece[sizeOfPieces];
+            initializePositions(i_BoardSize);
+        }
+
+        private void initializePositions(ushort i_BoardSize) // Place Checkers pieces on an empty board.
+        {
+            int toolIndex = 0;
+            bool reachLastIndex = false;
+
+            for (ushort i = 0; i < i_BoardSize; i++)
             {
-                for(int i = 0; i < i_GameBoard.SizeOfBoard; i++ )
+                for (ushort j = 0; j < i_BoardSize; j++)
                 {
-                    for (int j = 0; j < i_GameBoard.SizeOfBoard; j++)
+                    if (PlayerNumber == ePlayerType.MainPlayer)
                     {
-                        if (startIndex == 0)
-                        {
-                            if (i_GameBoard.CheckersBoard[i, j] == 'O')
-                            {
-                                m_CheckersPiece[chekerPieceIndex].changePosition((ushort)i, (ushort)j);
-                                chekerPieceIndex++;
-                            }
-                        }
-                        else
-                        {
-                            if (i_GameBoard.CheckersBoard[i, j] == 'X')
-                            {
-                                m_CheckersPiece[chekerPieceIndex].changePosition((ushort)i, (ushort)j);
-                                chekerPieceIndex++;
-                            }
-                        }
+                        setMainToolPosition(i, j, ref toolIndex);
                     }
+                    else
+                    {
+                        setSecondToolPosition(i_BoardSize, i, j, ref toolIndex);
+                    }
+
+                    if (toolIndex == (i_BoardSize / 2) * 3)
+                    {
+                        reachLastIndex = true;
+                        break;
+                    }
+                }
+
+                if (reachLastIndex)
+                {
+                    break;
+                }
+            }
+        }
+
+        private void setMainToolPosition(ushort i_Row, ushort i_Col, ref int io_ToolIndex) // Place Checker pieces According to row and col index
+        {
+            if (i_Row % 2 == 0)
+            {
+                if (i_Col % 2 != 0)
+                {
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                    io_ToolIndex++;
+                }
+            }
+            else
+            {
+                if (i_Col % 2 == 0)
+                {
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                    io_ToolIndex++;
+                }
+            }
+        }
+
+        private void setSecondToolPosition(ushort i_BoardSize, ushort i_Row, ushort i_Col, ref int io_ToolIndex) // Place Checker pieces According to row and col index
+        {
+            ushort rowIndex = (ushort) (i_BoardSize - i_Row - 1);
+            if (i_Row % 2 == 0)
+            {
+                if (i_Col % 2 != 0)
+                {
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerMainTool, rowIndex, i_Col);
+                    io_ToolIndex++;
+                }
+            }
+            else
+            {
+                if (i_Col % 2 == 0)
+                {
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerMainTool, rowIndex, i_Col);
+                    io_ToolIndex++;
                 }
             }
         }
@@ -160,23 +209,9 @@ namespace Player
             }
         }
 
-        public void MakeToolAKing(Board i_GameBoard, ref CheckersPiece i_CurrentCheckerPiece)
+        public void MakeToolAKing(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece)
         {
-            //if (PlayerNumber == ePlayerType.MainPlayer)
-            //{
-            //    if (hasReachedFinalRowUp(i_CurrentCheckerPiece.RowIndex))
-            //    {
-            //        i_CurrentCheckerPiece.BecomeKing();
-            //    }
-            //}
-            //else
-            //{
-            //    if (hasReachedFinalRowDown(i_GameBoard.SizeOfBoard, i_CurrentCheckerPiece.RowIndex))
-            //    {
-            //        i_CurrentCheckerPiece.BecomeKing();
-            //    }
-            //}
-            i_CurrentCheckerPiece.GotToOtherSideOfBoard(ref i_GameBoard);
+            io_CurrentCheckerPiece.GotToOtherSideOfBoard(ref i_GameBoard);
         }
 
         private static bool hasReachedFinalRowDown(ushort i_BoardSize, ushort i_CurrentRow)
@@ -189,134 +224,234 @@ namespace Player
             return i_CurrentRow == 0;
         }
 
-        public void MakeMove(ref Board i_GameBoard, string i_PositionFrom, string i_PositionTo)
+        public bool MakeMove(ref Board io_GameBoard, User i_RivalPlayer, string i_PositionFrom, string i_PositionTo)
         {
-            ushort rowIndex = (ushort) (i_PositionFrom[k_RowIndex] - 'a');
-            ushort colIndex = (ushort)(i_PositionFrom[k_ColIndex] - 'A');
-            bool isCheckerUpdated = isCheckerFoundAndUpdate(rowIndex, colIndex);
-           
-            if (isCheckerUpdated)
+            bool isGameOver = false;
+            CheckersPiece checkerPieceToMove = null;
+            CheckersPiece rivalCheckerPiece = null;
+
+            if (GetMovesAndUpdate(io_GameBoard, i_RivalPlayer))
             {
-                if (!m_CurrentCheckerPiece.IsKing)
+                playerMustCapture(io_GameBoard, i_PositionFrom, i_PositionTo,
+                    ref checkerPieceToMove, i_RivalPlayer.Pieces, ref rivalCheckerPiece);
+                // Checks if there's an optional capture, and updating the data structure.
+                MakeCapture(io_GameBoard, ref checkerPieceToMove, ref i_PositionTo, ref rivalCheckerPiece);
+            }
+            else
+            {
+                // If the player still have moves to do.
+                if (Moves == null || m_CheckersPiece.Length == 0)
                 {
-                    MoveUtils.MoveRegularTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, i_PositionFrom, i_PositionTo);
+                    isGameOver = true;
                 }
                 else
                 {
-                    MoveUtils.MoveKingTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, i_PositionFrom, i_PositionTo);
+                    playerMustMoveValid(io_GameBoard, i_PositionFrom, i_PositionTo, ref checkerPieceToMove);
+                    if (!IsComputer)
+                    {
+                        MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, i_PositionFrom, i_PositionTo);
+                    }
+                    else
+                    {
+                        MakeComputerMove(ref io_GameBoard, ref checkerPieceToMove);
+                    }
                 }
             }
+
+            return isGameOver;
         }
 
-        public void MakeComputerMove(ref Board i_GameBoard)
+        private void playerMustCapture(Board i_GameBoard, string i_PositionFrom, string i_PositionTo,
+            ref CheckersPiece io_CurrentChecker, CheckersPiece[] i_RivalPieces, ref CheckersPiece io_RivalChecker)
         {
-            string positionFrom = randomPositionFrom(ref i_GameBoard);
-            string positionTo = randomPositionTo(ref i_GameBoard);
-
-            if (!m_CurrentCheckerPiece.IsKing)
+            while (!isValidCapture(i_GameBoard, i_PositionFrom, i_PositionTo, ref io_CurrentChecker, i_RivalPieces,
+                ref io_RivalChecker))
             {
-                MoveUtils.MoveRegularTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, positionFrom, positionTo);
-            }
-            else
-            {
-                MoveUtils.MoveKingTool(this, ref i_GameBoard, ref m_CurrentCheckerPiece, positionFrom, positionTo);
+                Console.WriteLine("Invalid move. player must capture.");
+                Validation.UserTurnConversation(Name, ref i_PositionFrom, ref i_PositionTo);
+                Validation.ParsePositions(Console.ReadLine(), ref i_PositionFrom, ref i_PositionTo);
             }
         }
 
-        private string randomPositionFrom(ref Board i_GameBoard)
+        private void playerMustMoveValid(Board i_GameBoard, string i_PositionFrom, string i_PositionTo, ref CheckersPiece io_CurrentChecker)
         {
-            ushort rowIndex = (ushort) new Random().Next(i_GameBoard.SizeOfBoard - 1);
-            ushort colIndex = (ushort)new Random().Next(i_GameBoard.SizeOfBoard - 1);
-
-            while (!Validation.IsValidPosition(i_GameBoard.SizeOfBoard, rowIndex, colIndex) &&
-                   !isCheckerFoundAndUpdate(rowIndex, colIndex))
+            while (!isValidMove(i_GameBoard, i_PositionFrom, i_PositionTo, ref io_CurrentChecker))
             {
-                rowIndex = (ushort)new Random().Next(i_GameBoard.SizeOfBoard - 1);
-                colIndex = (ushort)new Random().Next(i_GameBoard.SizeOfBoard - 1);
+                Console.WriteLine("Invalid move. player must move with to free positions.");
+                Validation.UserTurnConversation(Name, ref i_PositionFrom, ref i_PositionTo);
+                Validation.ParsePositions(Console.ReadLine(), ref i_PositionFrom, ref i_PositionTo);
             }
-
-            char[] position = new char[2];
-            position[0] = (char) (m_CurrentCheckerPiece.RowIndex + 'a');
-            position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A');
-
-            return new string(position);
         }
 
-        private string randomPositionTo(ref Board i_GameBoard)
+        private bool isValidCapture(Board i_GameBoard, string i_PositionFrom, string i_PositionTo,
+                                 ref CheckersPiece io_CurrentChecker, CheckersPiece[] i_RivalPieces, ref CheckersPiece io_RivalChecker)
         {
-            string positionTo = null;
-            char[] position = new char[2];
+            bool isValid = false;
+            ushort rowIndex, colIndex;
 
-            // Down
-            if (CheckerKind == CheckersPiece.ePieceKind.SecondPlayerMainTool)
+            foreach (string positionFrom in Moves.Keys)
             {
-                if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex + 1, m_CurrentCheckerPiece.ColIndex + 1] != 'O' &&
-                    i_GameBoard.IsCheckerAvailable((ushort) (m_CurrentCheckerPiece.RowIndex + 2),
-                        (ushort)(m_CurrentCheckerPiece.ColIndex + 2)))
+                if (i_PositionFrom == positionFrom)
                 {
-                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' + 2);
-                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' + 2);
-                    positionTo = new string(position);
-                }
-                else if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex + 1,
-                             m_CurrentCheckerPiece.ColIndex - 1] != 'O' &&
-                         i_GameBoard.IsCheckerAvailable((ushort) (m_CurrentCheckerPiece.RowIndex + 2),
-                             (ushort) (m_CurrentCheckerPiece.ColIndex - 2)))
-                {
-                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' + 2);
-                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' - 2);
-                    positionTo = new string(position);
-                }
-            }
-            else
-            {
-                if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex - 1, m_CurrentCheckerPiece.ColIndex + 1] != 'X' &&
-                    i_GameBoard.IsCheckerAvailable((ushort)(m_CurrentCheckerPiece.RowIndex + 2),
-                        (ushort)(m_CurrentCheckerPiece.ColIndex + 2)))
-                {
-                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' - 2);
-                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' + 2);
-                    positionTo = new string(position);
-                }
-                else if (i_GameBoard.CheckersBoard[m_CurrentCheckerPiece.RowIndex - 1,
-                             m_CurrentCheckerPiece.ColIndex - 1] != 'O' &&
-                         i_GameBoard.IsCheckerAvailable((ushort)(m_CurrentCheckerPiece.RowIndex + 2),
-                             (ushort)(m_CurrentCheckerPiece.ColIndex - 2)))
-                {
-                    position[0] = (char)(m_CurrentCheckerPiece.RowIndex + 'a' - 2);
-                    position[1] = (char)(m_CurrentCheckerPiece.ColIndex + 'A' - 2);
-                    positionTo = new string(position);
+                    if (isPositionInList(i_PositionTo, Moves[positionFrom]))
+                    {
+                        colIndex = i_GameBoard.GetIndexInBoard(ref i_PositionFrom, out rowIndex);
+                        io_CurrentChecker = CaptureUtils.FindCheckerPiece(rowIndex, colIndex, Pieces);
+
+                        colIndex = (ushort) (i_PositionTo[k_ColIndex] - i_PositionFrom[k_RowIndex] + 1);
+                        rowIndex = (ushort)(i_PositionTo[k_ColIndex] - i_PositionFrom[k_RowIndex] + 1);
+                        io_RivalChecker = CaptureUtils.FindCheckerPiece(rowIndex, colIndex, i_RivalPieces);
+
+                        isValid = true;
+                        break;
+                    }
                 }
             }
 
-            return positionTo;
+            return isValid;
         }
 
-        private bool isCheckerFoundAndUpdate(ushort i_RowIndex, ushort i_ColIndex)
+        private bool isValidMove(Board i_GameBoard, string i_PositionFrom, string i_PositionTo, ref CheckersPiece io_CurrentChecker)
+        {
+            bool isValid = false;
+            ushort rowIndex, colIndex;
+
+            foreach (string positionFrom in Moves.Keys)
+            {
+                if (i_PositionFrom == positionFrom)
+                {
+                    if (isPositionInList(i_PositionTo, Moves[positionFrom]))
+                    {
+                        colIndex = i_GameBoard.GetIndexInBoard(ref i_PositionFrom, out rowIndex);
+                        io_CurrentChecker = CaptureUtils.FindCheckerPiece(rowIndex, colIndex, Pieces);
+
+                        isValid = true;
+                        break;
+                    }
+                }
+            }
+
+            return isValid;
+        }
+
+        private bool isPositionInList(string i_PositionTo, List<string> i_Positions)
         {
             bool isFound = false;
 
-            foreach (CheckersPiece checkerPiece in Pieces)
+            foreach (string positionsTo in i_Positions)
             {
-                if (CaptureUtils.isSamePosition(checkerPiece, i_RowIndex, i_ColIndex))
+                if (i_PositionTo == positionsTo)
                 {
-                    m_CurrentCheckerPiece = checkerPiece;
                     isFound = true;
+                    break;
                 }
             }
 
             return isFound;
         }
 
-        public void MakeCapture(Board i_GameBoard, ref CheckersPiece i_CurrentCheckerPiece, ref string i_PositionTo,
-                                ref CheckersPiece i_RivalCheckerPiece)
+        public void MakeUserMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
         {
-            CaptureUtils.CaptureRivalCheckerPiece(i_GameBoard, ref i_CurrentCheckerPiece,
-                                                  ref i_PositionTo, ref i_RivalCheckerPiece);
-            m_CurrentCheckerPiece = i_CurrentCheckerPiece;
+            //ushort rowIndex;
+            //ushort colIndex = io_GameBoard.GetIndexInBoard(ref i_PositionFrom, out rowIndex);
+
+            //updateCurrentCheckerPiece(rowIndex, colIndex);
+            if (!m_CurrentCheckerPiece.IsKing)
+            {
+                MoveUtils.MoveRegularTool(this, ref io_GameBoard, ref io_CurrentChecker, i_PositionFrom, i_PositionTo);
+                MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
+            }
+            else
+            {
+                MoveUtils.MoveKingTool(this, ref io_GameBoard, ref io_CurrentChecker, i_PositionFrom, i_PositionTo);
+            }
         }
 
-        public bool UpdateAndGetMoves(Board i_GameBoard, User i_RivalPlayer)
+        public void MakeComputerMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker)
+        {
+            string[] positions = getRandomMove(io_GameBoard);
+
+            if (!m_CurrentCheckerPiece.IsKing)
+            {
+                MoveUtils.MoveRegularTool(
+                    this,
+                    ref io_GameBoard,
+                    ref io_CurrentChecker,
+                    positions[0],
+                    positions[1]);
+                MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
+            }
+            else
+            {
+                MoveUtils.MoveKingTool(
+                    this, 
+                    ref io_GameBoard,
+                    ref io_CurrentChecker,
+                    positions[0],
+                    positions[1]);
+            }
+        }
+
+        private string[] getRandomMove(Board i_GameBoard)
+        {
+            char rowIndex = (char)(new Random().Next(i_GameBoard.SizeOfBoard - 1) + 'a');
+            char colIndex = (char)(new Random().Next(i_GameBoard.SizeOfBoard - 1) + 'A');
+            string[] positions = new string[2];
+            positions[0] = new string(colIndex, rowIndex);
+
+            while (!isCheckerFoundAndUpdate(i_GameBoard, positions[0], out positions[1]))
+            {
+                rowIndex = (char)(new Random().Next(i_GameBoard.SizeOfBoard - 1) + 'a');
+                colIndex = (char)(new Random().Next(i_GameBoard.SizeOfBoard - 1) + 'A');
+                positions[0] = new string(colIndex, rowIndex);
+            }
+
+            return positions;
+        }
+
+        private bool isCheckerFoundAndUpdate(Board i_GameBoard, string i_PositionFrom, out string o_PositionTo)
+        {
+            bool isFound = false;
+            o_PositionTo = null;
+
+            foreach (string checkerPosition in m_Moves.Keys)
+            {
+                if (checkerPosition == i_PositionFrom)
+                {
+                    ushort rowIndex;
+                    ushort colIndex = i_GameBoard.GetIndexInBoard(ref i_PositionFrom, out rowIndex);
+                    updateCurrentCheckerPiece(rowIndex, colIndex);
+                    o_PositionTo = m_Moves[checkerPosition][0]; // For now return the first available position to go to.
+                    isFound = true;
+                    break;
+                }
+            }
+
+            return isFound;
+        }
+
+        private void updateCurrentCheckerPiece(ushort i_RowIndex, ushort i_ColIndex)
+        {
+
+            foreach (CheckersPiece checkerPiece in m_CheckersPiece)
+            {
+                if (CaptureUtils.isSamePosition(checkerPiece, i_RowIndex, i_ColIndex))
+                {
+                    m_CurrentCheckerPiece = checkerPiece;
+                    break;
+                }
+            }
+        }
+
+        public void MakeCapture(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece, ref string io_PositionTo,
+                                ref CheckersPiece io_RivalCheckerPiece)
+        {
+            CaptureUtils.CaptureRivalCheckerPiece(i_GameBoard, ref io_CurrentCheckerPiece,
+                                                  ref io_PositionTo, ref io_RivalCheckerPiece);
+            m_CurrentCheckerPiece = io_CurrentCheckerPiece;
+        }
+
+        public bool GetMovesAndUpdate(Board i_GameBoard, User i_RivalPlayer)
         {
             bool canCapture = true;
 
@@ -333,7 +468,13 @@ namespace Player
             // If there's a "soldier" that can capture again.
             else
             {
+                // If there's capture in a row.
                 m_Moves = createCaptureMoveList(i_GameBoard, i_RivalPlayer);
+                // Check if there are no more captures to do in a row with the current checker.
+                if (Moves.Count == 0)
+                {
+                    m_CurrentCheckerPiece = null;
+                }
             }
 
             return canCapture;
@@ -346,37 +487,39 @@ namespace Player
 
             if (m_PlayerNumber == ePlayerType.MainPlayer)
             {
-                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
             }
             else
             {
-                CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
             }
 
             return captureList;
         }
 
-        // This method probably should be under 'Game'!!
-        public static void Quit(char i_QuitInput)
-        {
-            // Quit the game if the user press 'Q'.
-            char answer;
+        //private void MakeComputerBestMove(Board i_GameBoard, User i_RivalPlayer)
+        //{
+        //    CheckersPiece currentCheckersPiece = null;
+        //    CheckersPiece rivalCheckersPiece = null;
 
-            if (i_QuitInput == k_Quit)
-            {
-                // Make sure if the player really intended to quit the game or pressed by mistake.
-                Console.WriteLine("Are you sure you want to quit the game? press Y if yes.");
-                char.TryParse(Console.ReadLine(), out answer);
-
-                if (answer == k_Yes)
-                {
-                    // Show score, and declare winner and loser.
-                }
-            }
-
-            // Continue otherwise.
-        }
-
-
+        //    // If the computer has the option to capture.
+        //    if (GetMovesAndUpdate(i_GameBoard, i_RivalPlayer))
+        //    {
+        //        // currentCheckersPiece
+        //        // MakeCapture
+        //    }
+        //    else
+        //    {
+        //        // MakeMove
+        //    }
+        //}
     }
 }

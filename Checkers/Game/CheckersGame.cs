@@ -10,57 +10,71 @@ namespace Game
     {
         public static void runGame()
         {
+            bool isComputer = false;
             string firstPlayerName = UserIntterface.GetValidUserName();
-            User firstPlayer = new User(firstPlayerName, User.ePlayerType.MainPlayer, CheckersPiece.ePieceKind.MainPlayerTool);
+            User firstPlayer = new User(firstPlayerName, User.ePlayerType.MainPlayer,isComputer);
             ushort boardSize = UserIntterface.GetValidBoardSize();
             Board gameBoard = new Board(boardSize);
             char choice = UserIntterface.GetRival();
             string rivalName = string.Empty;
             // gameBoard.printBoard();
-            if (choice == 1)
+            if (choice == '1')
             {
                 rivalName = UserIntterface.GetValidUserName();
             }
             else
             {
-                rivalName = "computer";
+                isComputer = true;
+                rivalName = "computer";   
             }
-            User rivalPlayer = new User(rivalName, User.ePlayerType.RivalPlayer, CheckersPiece.ePieceKind.SecondPlayerMainTool);
+
+            User rivalPlayer = new User(rivalName, User.ePlayerType.RivalPlayer, isComputer);
             playGame(firstPlayer, rivalPlayer, gameBoard);
         }
 
         private static void playGame(User i_FirstPlayer, User i_SecondPlayer, Board i_GameBoard)
         {
             i_GameBoard.InitializeBoard();
-            i_FirstPlayer.InitializeCheckersArray(i_GameBoard);
-            i_SecondPlayer.InitializeCheckersArray(i_GameBoard);
+            i_FirstPlayer.InitializeCheckersArray(i_GameBoard.SizeOfBoard);
+            i_SecondPlayer.InitializeCheckersArray(i_GameBoard.SizeOfBoard);
             bool hasGameFinished = false;
             bool isFirstPlayerTurn = true;
             string currentMove= string.Empty;
-            string destinationPosition;
-            while (hasGameFinished)
+            string currentLocation = string.Empty;
+            string destinationPosition =string.Empty;
+
+            while (!hasGameFinished)
             {
+                i_GameBoard.printBoard();
+                currentMove = UserIntterface.GetValidMove(i_GameBoard);
+
                 if (isFirstPlayerTurn)
                 {
-                    currentMove = UserIntterface.GetValidMove(i_GameBoard);
-                    if(currentMove =="Q")
+                    UserIntterface.PlayerTurn(i_GameBoard, i_FirstPlayer);
+                    Validation.ParsePositions(currentMove, ref currentLocation, ref destinationPosition);
+                    if (currentMove =="Q")
                     {
-
-                    }
-                    hasGameFinished = i_FirstPlayer.MakeMove(i_GameBoard);
-                }
-                else
-                {
-                    currentMove = UserIntterface.GetValidMove(i_GameBoard);
-                    if (currentMove == "Q")
-                    {
-                        i_FirstPlayer.quit();
+                        quitGame(i_FirstPlayer, i_SecondPlayer); 
                     }
                     else
                     {
-                        i_SecondPlayer.MakeMove(ref hasGameFinished);
+                        hasGameFinished = i_FirstPlayer.MakeMove(ref i_GameBoard, i_SecondPlayer,currentLocation,destinationPosition);
                     }
-                    
+                }
+                else
+                {
+                    currentMove = UserIntterface.PlayerTurn(i_GameBoard, i_FirstPlayer);
+                    Validation.ParsePositions(currentMove, ref currentLocation, ref destinationPosition);
+                    //currentMove = UserIntterface.GetValidMove(i_GameBoard);
+                    if (currentMove == "Q")
+                    {
+                        quitGame(i_SecondPlayer, i_FirstPlayer); 
+                    }
+                    else
+                    {
+                        hasGameFinished = i_SecondPlayer.MakeMove(ref i_GameBoard, i_FirstPlayer, currentLocation, destinationPosition);
+                    }
+
                 }
             }
 
@@ -94,5 +108,13 @@ i_AnotherPlayer.Score,
 winner);
             Console.WriteLine(ScoreMessage);
         }
+
+        private static void quitGame(User i_player,User i_RivalPlayer)
+        {
+            i_player.Score = 0;
+            i_RivalPlayer.Score = 0;
+            UserIntterface.PrintForfeitMessage(i_player.Name, i_RivalPlayer.Name);
+        }
+
     }
 }

@@ -173,7 +173,7 @@ leftIndex);
 
         public bool IsCheckerValidPosition(ushort i_ColIndex, ushort i_RowIndex) // Checks if checker is in bound.
         {
-            return (i_RowIndex < m_SizeOfBoard && i_RowIndex >= 0) || (i_ColIndex < m_SizeOfBoard && i_ColIndex >= 0);
+            return (i_RowIndex < m_SizeOfBoard && i_RowIndex >= 0) && (i_ColIndex < m_SizeOfBoard && i_ColIndex >= 0);
         }
 
         // Update the board according to player move

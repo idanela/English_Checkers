@@ -16,7 +16,7 @@ namespace UI
         {
             string playerName = Console.ReadLine();
 
-            while (IsValidUserName(playerName))
+            while (!IsValidUserName(playerName))
             {
                 Console.WriteLine("Invalid Input please type your name again.");
                 playerName = Console.ReadLine();
@@ -27,7 +27,7 @@ namespace UI
 
             private static bool IsValidUserName(string nameOfPlayer)
             {
-                bool isValidName = nameOfPlayer.Length > 20 && nameOfPlayer.Length > 0;
+                bool isValidName = nameOfPlayer.Length <= 20 && nameOfPlayer.Length > 0;
 
                 if (isValidName)
                 {
@@ -52,7 +52,6 @@ namespace UI
             while (!ushort.TryParse(Console.ReadLine(), out sizeOfBoard) || !CheckersBoard.Board.isValidBoardSize(sizeOfBoard))
             {
                 Console.WriteLine("Invalid input please insert size again.");
-                ushort.TryParse(Console.ReadLine(), out sizeOfBoard);
             }
 
             return sizeOfBoard;
@@ -77,7 +76,7 @@ namespace UI
         private static char getValidchoice(string PlayerChoice)
         {
             char choice;
-            while (!char.TryParse(PlayerChoice, out choice) && choice != '1' && choice != '2')
+            while (!char.TryParse(PlayerChoice, out choice) || (choice != '1' && choice != '2'))
             {
                 Console.WriteLine("invalid choice. please try again:");
                 PlayerChoice = Console.ReadLine();
@@ -120,8 +119,8 @@ namespace UI
         {
                 return i_moveToPreform.Length == 5 && 
                 char.IsUpper(i_moveToPreform[0]) &&
-                char.IsLower(i_moveToPreform[0]) &&
-                i_moveToPreform[3] == '>' &&
+                char.IsLower(i_moveToPreform[1]) &&
+                i_moveToPreform[2] == '>' &&
                 char.IsUpper(i_moveToPreform[3]) &&
                 char.IsLower(i_moveToPreform[4]);
         }
@@ -135,7 +134,7 @@ namespace UI
             return checkIndexes(i_Board, location, destination);
         }
 
-       public bool checkIndexes(Board i_Board, string i_Location, string i_Destination)
+       public static bool checkIndexes(Board i_Board, string i_Location, string i_Destination)
         {
             bool isValidIndexesMove = false;
             ushort colIndex = ushort.Parse(i_Location[0].ToString());
@@ -151,7 +150,23 @@ namespace UI
 
             return isValidIndexesMove;
         }
- 
+
+
+
+        public static void PrintForfeitMessage(string i_playerName, string i_RivalPlayerName)
+        {
+            string forfeitMessage = string.Format("{0} has quit, {1} is the winner", i_playerName,i_RivalPlayerName);
+            Console.WriteLine(forfeitMessage);
+        }
+
+        public static string  PlayerTurn( Board i_GameBoard, User i_player)
+        {
+            Console.WriteLine(i_player.Name+"'s turn, pleade insert a move:");
+            string currentMove = UserIntterface.GetValidMove(i_GameBoard);
+
+            return currentMove;
+        }
+
     }
 
 }

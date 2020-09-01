@@ -129,7 +129,7 @@ namespace CheckerPiece
             m_IsAlive = false;
         }
 
-        public void changePosition(ushort i_NewRowIndex, ushort i_NewColIndex) // Changes a piece location.
+        public void ChangePosition(ushort i_NewRowIndex, ushort i_NewColIndex) // Changes a piece location.
         {
             m_RowIndex = i_NewRowIndex;
             m_ColIndex = i_NewColIndex;
