@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Channels;
 using CheckersBoard;
 using CheckerPiece;
 
@@ -114,15 +116,20 @@ namespace Player
         public static void addToDict(ref Dictionary<string, List<string>> io_Options, CheckersPiece i_CurrentChecker, string i_OptionPosition)
         {
             string currentPosition = GetStringIndexes(i_CurrentChecker.RowIndex, i_CurrentChecker.ColIndex);
+            if (!io_Options.ContainsKey(currentPosition))
+            {
+                io_Options.Add(currentPosition, new List<string>());
+            }
             io_Options[currentPosition].Add(i_OptionPosition);
         }
 
         public static string GetStringIndexes(ushort i_RowIndex, ushort i_ColIndex)
         {
-            char row = (char)(i_RowIndex + 'a');
-            char col = (char)(i_ColIndex + 'A');
+            char[] indexes = new char[2];
+            indexes[k_RowIndex] = (char)(i_RowIndex + 'a');
+            indexes[k_ColIndex] = (char)(i_ColIndex + 'A');
 
-            return new string(row, col);
+            return new string(indexes);
         }
 
 
@@ -143,6 +150,8 @@ namespace Player
                 io_CurrentChecker.ColIndex,
                 nextRowIndex,
                 nextColIndex);
+
+            io_CurrentChecker.ChangePosition(nextRowIndex, nextColIndex);
         }
 
         public static void MoveKingTool(User i_CurrentPlayer, ref Board io_GameBoard,
@@ -161,6 +170,8 @@ namespace Player
                 io_CurrentChecker.ColIndex,
                 nextRowIndex,
                 nextColIndex);
+
+            io_CurrentChecker.ChangePosition(nextRowIndex, nextColIndex);
         }
     }
 }
