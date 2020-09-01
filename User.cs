@@ -23,9 +23,9 @@ namespace Player
         private ushort m_Score;
         private CheckersPiece[] m_CheckersPiece;
         private CheckersPiece.ePieceKind m_CheckerPieceKind;
+        private CheckersPiece m_CurrentCheckerPiece;
         private readonly ePlayerType m_PlayerNumber;
         private Dictionary<string, List<string>> m_Moves;
-        private CheckersPiece m_CurrentCheckerPiece;
         private readonly bool m_IsComputer;
 
         // Enums:
@@ -113,11 +113,71 @@ namespace Player
 
 
         // Methods:
-        public void InitializeCheckersArray(int i_BoardSize)
+        public void InitializeCheckersArray(ushort i_BoardSize)
         {
             int sizeOfPieces = ((i_BoardSize / 2) * 3);
 
             m_CheckersPiece = new CheckersPiece[sizeOfPieces];
+            initializePositions(i_BoardSize);
+        }
+
+        private void initializePositions(ushort i_BoardSize) // Place Checkers pieces on an empty board.
+        {
+            int mainToolIndex = 0;
+            int secondToolIndex = 0;
+
+            for (ushort i = 0 ; i < i_BoardSize; i++)
+            {
+                for (ushort j = 0; j < i_BoardSize; j++)
+                {
+                    if (PlayerNumber == ePlayerType.MainPlayer)
+                    {
+                        setMainToolPosition(i, j, mainToolIndex);
+                        mainToolIndex++;
+                    }
+                    else
+                    {
+                        setSecondToolPosition(i_BoardSize, i, j, secondToolIndex);
+                    }
+                }
+            }
+        }
+
+        private void setMainToolPosition(ushort i_Row, ushort i_Col, int i_ToolIndex) // Place Checker pieces According to row and col index
+        {
+            if (i_Row % 2 == 0)
+            {
+                if (i_Col % 2 != 0)
+                {
+                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                }
+            }
+            else
+            {
+                if (i_Col % 2 == 0)
+                {
+                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                }
+            }
+        }
+
+        private void setSecondToolPosition(ushort i_BoardSize, ushort i_Row, ushort i_Col, int i_ToolIndex) // Place Checker pieces According to row and col index
+        {
+            ushort rowIndex = (ushort) (i_BoardSize - i_Row);
+            if (i_Row % 2 == 0)
+            {
+                if (i_Col % 2 != 0)
+                {
+                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerTool, rowIndex, i_Col);
+                }
+            }
+            else
+            {
+                if (i_Col % 2 == 0)
+                {
+                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerTool, rowIndex, i_Col);
+                }
+            }
         }
 
         public void GetAndCalculateScore()
@@ -163,8 +223,9 @@ namespace Player
             return i_CurrentRow == 0;
         }
 
-        public void MakeMove(ref Board io_GameBoard, User i_RivalPlayer, string i_PositionFrom, string i_PositionTo)
+        public bool MakeMove(ref Board io_GameBoard, User i_RivalPlayer, string i_PositionFrom, string i_PositionTo)
         {
+            bool isGameOver = false;
             CheckersPiece checkerPieceToMove = null;
             CheckersPiece rivalCheckerPiece = null;
 
@@ -177,16 +238,26 @@ namespace Player
             }
             else
             {
-                playerMustMoveValid(io_GameBoard, i_PositionFrom, i_PositionTo, ref checkerPieceToMove);
-                if (!IsComputer)
+                // If the player still have moves to do.
+                if (Moves == null || m_CheckersPiece.Length == 0)
                 {
-                    MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, i_PositionFrom, i_PositionTo);
+                    isGameOver = true;
                 }
                 else
                 {
-                    MakeComputerMove(ref io_GameBoard, ref checkerPieceToMove);
+                    playerMustMoveValid(io_GameBoard, i_PositionFrom, i_PositionTo, ref checkerPieceToMove);
+                    if (!IsComputer)
+                    {
+                        MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, i_PositionFrom, i_PositionTo);
+                    }
+                    else
+                    {
+                        MakeComputerMove(ref io_GameBoard, ref checkerPieceToMove);
+                    }
                 }
             }
+
+            return isGameOver;
         }
 
         private void playerMustCapture(Board i_GameBoard, string i_PositionFrom, string i_PositionTo,
