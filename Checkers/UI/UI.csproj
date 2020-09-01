@@ -46,6 +46,10 @@
       <Project>{21f0f380-d8fa-42bd-9f71-91451aa0914e}</Project>
       <Name>board</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Player\Player.csproj">
+      <Project>{b5f2a7a7-3651-493f-a75f-cb63518b0f1d}</Project>
+      <Name>Player</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,14 +3,14 @@ using CheckersBoard;
 
 namespace CheckerPiece
 {
-   public struct CheckersPiece
+   public class CheckersPiece
     {
         public enum ePieceKind
         {
-            X,
-            O, 
-            K,
-            U
+          MainPlayerTool= 'X',
+          SecondPlayerMainTool='O', 
+          MainPlayerKing = 'K',
+          SecondPlayerKing= 'U'
         }
 
         // Members
@@ -85,6 +85,7 @@ namespace CheckerPiece
             }
         }
 
+
         public void MarkAsCanEatAgain()
         {
             m_CanEatAgain = true;
@@ -96,25 +97,31 @@ namespace CheckerPiece
 
         public void GotToOtherSideOfBoard(ref Board i_CheckersBoard) // Checks if a checker piece need to become a king.
         {
-            if((this.PieceKind == ePieceKind.X && m_RowIndex == 0) 
-              || (this.PieceKind == ePieceKind.O && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1))
+            if((this.PieceKind == ePieceKind.MainPlayerTool && m_RowIndex == 0) 
+              || (this.PieceKind == ePieceKind.SecondPlayerMainTool && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1))
             {
                 this.becomeKing();
+                updateKingChecker(ref i_CheckersBoard);
             }
         }
 
        private void becomeKing() // makes a checker piece a king.
         {
-            if(m_PieceKind == ePieceKind.X)
+            if(m_PieceKind == ePieceKind.MainPlayerTool)
             {
-                m_PieceKind = ePieceKind.K;
+                m_PieceKind = ePieceKind.MainPlayerKing;
             }
             else
             {
-                m_PieceKind = ePieceKind.U;
+                m_PieceKind = ePieceKind.SecondPlayerKing;
             }
 
             m_IsKing = true;
+        }
+
+        private void updateKingChecker(ref Board i_CheckersBoard)
+        {
+            i_CheckersBoard.CheckersBoard[this.RowIndex, this.ColIndex] = (char)this.PieceKind;
         }
 
         public void Die() // "Kill" a checker piece. 

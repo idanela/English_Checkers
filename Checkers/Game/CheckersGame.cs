@@ -1,6 +1,7 @@
 ﻿using System;
 using Player;
 using CheckersBoard;
+using CheckerPiece;
 using UI;
 
 namespace Game
@@ -10,57 +11,63 @@ namespace Game
         public static void runGame()
         {
             string firstPlayerName = UserIntterface.GetValidUserName();
-            User firstPlayer = new User(firstPlayerName, 'X'); 
+            User firstPlayer = new User(firstPlayerName, User.ePlayerType.MainPlayer, CheckersPiece.ePieceKind.MainPlayerTool);
             ushort boardSize = UserIntterface.GetValidBoardSize();
             Board gameBoard = new Board(boardSize);
             char choice = UserIntterface.GetRival();
-
-            gameBoard.printBoard();
+            string rivalName = string.Empty;
+           // gameBoard.printBoard();
             if(choice == 1)
             {
-                playVsComputer(firstPlayer);
+                rivalName = UserIntterface.GetValidUserName();        
             }
             else
             {
-                playVsAnotherPlayer(firstPlayer);
+                rivalName = "computer";
             }
+            User rivalPlayer = new User(rivalName, User.ePlayerType.RivalPlayer, CheckersPiece.ePieceKind.SecondPlayerMainTool);
+            playGame(firstPlayer, rivalPlayer, gameBoard);
         }
 
-        private static void playVsAnotherPlayer(User i_FirstPlayer, Board i_GameBoard)
-        {
-            string name = UserIntterface.GetValidUserName();
-            User secondPlayer = new User(name, 'O');
+        //private static void playVsAnotherPlayer(User i_FirstPlayer, Board i_GameBoard)
+        //{
+        //    string name = UserIntterface.GetValidUserName();
+        //    User secondPlayer = new User(name, User.ePlayerType.RivalPlayer, CheckersPiece.ePieceKind.SecondPlayerMainTool);
 
-            playGame(i_FirstPlayer, secondPlayer, i_GameBoard);
-        }
+        //    playGame(i_FirstPlayer, secondPlayer, i_GameBoard);
+        //}
 
-        private static void playVsComputer(User i_FirstPlayer, Board i_GameBoard)
-        {      
-            User computerPlayer = new User("Computer", 'O');
+        //private static void playVsComputer(User i_FirstPlayer, Board i_GameBoard)
+        //{      
+        //    User computerPlayer = new User("Computer", User.ePlayerType.RivalPlayer, CheckersPiece.ePieceKind.SecondPlayerMainTool);
 
-            playGame(i_FirstPlayer, computerPlayer, i_GameBoard);
-            printResult(i_FirstPlayer, computerPlayer);
-        }
+        //    playGame(i_FirstPlayer, computerPlayer, i_GameBoard);
+        //    printResult(i_FirstPlayer, computerPlayer);
+        //}
 
         private static void playGame(User i_FirstPlayer, User i_SecondPlayer, Board i_GameBoard)
         {
             i_GameBoard.InitializeBoard();
             bool hasGameFinished = false;
             bool isFirstPlayerTurn = true;
-
+            string currentPosition= string.Empty;
+            string destinationPosition;
             while (hasGameFinished)
             {
                 if (isFirstPlayerTurn)
                 {
-                    i_FirstPlayer.MakeMove(ref hasGameFinished);
+                    currentPosition = UserIntterface.GetValidMove(i_GameBoard);
+                    if()
+                    hasGameFinished = i_FirstPlayer.MakeMove(i_GameBoard);
                 }
                 else
                 {
+                    currentPosition = UserIntterface.GetValidMove(i_GameBoard);
                     i_SecondPlayer.MakeMove(ref hasGameFinished);
                 }
             }
 
-            printResult(i_FirstPlayer, secondPlayer);
+            printResult(i_FirstPlayer, i_SecondPlayer);
            if(UserIntterface.WouldLikeToPlayAgain())
             { 
                 playGame(i_FirstPlayer, i_SecondPlayer, i_GameBoard);
