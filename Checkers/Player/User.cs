@@ -101,7 +101,6 @@ namespace Player
             }
         }
 
-
         // Methods:
         public void InitializeCheckersArray(Board i_GameBoard)
         {
@@ -112,10 +111,10 @@ namespace Player
             {
                 starIndex = i_GameBoard.SizeOfBoard - 1;
             }
-            this.ininitializePositions(starIndex, i_GameBoard, numOfPieces);
+            this.ininitializePositions(starIndex, i_GameBoard);
         }
 
-        public void ininitializePositions(int startIndex, Board i_GameBoard, int i_NumOfPieces)
+        public void ininitializePositions(int startIndex, Board i_GameBoard)
         {
             ushort chekerPieceIndex = 0;
 

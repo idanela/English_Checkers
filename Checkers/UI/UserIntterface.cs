@@ -94,7 +94,7 @@ namespace UI
             return WouldLikeToPlayAgain == '1';
         }
 
-        public string GetValidMove(Board i_Board)
+        public static string GetValidMove(Board i_Board)
         {
             Console.WriteLine("please enter Q if you like to quit otherwise insert a move");
             string move = Console.ReadLine();
@@ -150,8 +150,8 @@ namespace UI
             }
 
             return isValidIndexesMove;
-
         }
+ 
     }
 
 }

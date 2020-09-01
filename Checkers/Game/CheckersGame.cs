@@ -16,10 +16,10 @@ namespace Game
             Board gameBoard = new Board(boardSize);
             char choice = UserIntterface.GetRival();
             string rivalName = string.Empty;
-           // gameBoard.printBoard();
-            if(choice == 1)
+            // gameBoard.printBoard();
+            if (choice == 1)
             {
-                rivalName = UserIntterface.GetValidUserName();        
+                rivalName = UserIntterface.GetValidUserName();
             }
             else
             {
@@ -29,43 +29,38 @@ namespace Game
             playGame(firstPlayer, rivalPlayer, gameBoard);
         }
 
-        //private static void playVsAnotherPlayer(User i_FirstPlayer, Board i_GameBoard)
-        //{
-        //    string name = UserIntterface.GetValidUserName();
-        //    User secondPlayer = new User(name, User.ePlayerType.RivalPlayer, CheckersPiece.ePieceKind.SecondPlayerMainTool);
-
-        //    playGame(i_FirstPlayer, secondPlayer, i_GameBoard);
-        //}
-
-        //private static void playVsComputer(User i_FirstPlayer, Board i_GameBoard)
-        //{      
-        //    User computerPlayer = new User("Computer", User.ePlayerType.RivalPlayer, CheckersPiece.ePieceKind.SecondPlayerMainTool);
-
-        //    playGame(i_FirstPlayer, computerPlayer, i_GameBoard);
-        //    printResult(i_FirstPlayer, computerPlayer);
-        //}
-
         private static void playGame(User i_FirstPlayer, User i_SecondPlayer, Board i_GameBoard)
         {
             i_GameBoard.InitializeBoard();
-            i_FirstPlayer.InitializeCheckersArray
-            i_SecondPlayer.
+            i_FirstPlayer.InitializeCheckersArray(i_GameBoard);
+            i_SecondPlayer.InitializeCheckersArray(i_GameBoard);
             bool hasGameFinished = false;
             bool isFirstPlayerTurn = true;
-            string currentPosition= string.Empty;
+            string currentMove= string.Empty;
             string destinationPosition;
             while (hasGameFinished)
             {
                 if (isFirstPlayerTurn)
                 {
-                    currentPosition = UserIntterface.GetValidMove(i_GameBoard);
-                    if()
+                    currentMove = UserIntterface.GetValidMove(i_GameBoard);
+                    if(currentMove =="Q")
+                    {
+
+                    }
                     hasGameFinished = i_FirstPlayer.MakeMove(i_GameBoard);
                 }
                 else
                 {
-                    currentPosition = UserIntterface.GetValidMove(i_GameBoard);
-                    i_SecondPlayer.MakeMove(ref hasGameFinished);
+                    currentMove = UserIntterface.GetValidMove(i_GameBoard);
+                    if (currentMove == "Q")
+                    {
+                        i_FirstPlayer.quit();
+                    }
+                    else
+                    {
+                        i_SecondPlayer.MakeMove(ref hasGameFinished);
+                    }
+                    
                 }
             }
 
