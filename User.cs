@@ -123,59 +123,73 @@ namespace Player
 
         private void initializePositions(ushort i_BoardSize) // Place Checkers pieces on an empty board.
         {
-            int mainToolIndex = 0;
-            int secondToolIndex = 0;
+            int toolIndex = 0;
+            bool reachLastIndex = false;
 
-            for (ushort i = 0 ; i < i_BoardSize; i++)
+            for (ushort i = 0; i < i_BoardSize; i++)
             {
                 for (ushort j = 0; j < i_BoardSize; j++)
                 {
                     if (PlayerNumber == ePlayerType.MainPlayer)
                     {
-                        setMainToolPosition(i, j, mainToolIndex);
-                        mainToolIndex++;
+                        setMainToolPosition(i, j, ref toolIndex);
                     }
                     else
                     {
-                        setSecondToolPosition(i_BoardSize, i, j, secondToolIndex);
+                        setSecondToolPosition(i_BoardSize, i, j, ref toolIndex);
+                    }
+
+                    if (toolIndex == (i_BoardSize / 2) * 3)
+                    {
+                        reachLastIndex = true;
+                        break;
                     }
                 }
+
+                if (reachLastIndex)
+                {
+                    break;
+                }
             }
         }
 
-        private void setMainToolPosition(ushort i_Row, ushort i_Col, int i_ToolIndex) // Place Checker pieces According to row and col index
+        private void setMainToolPosition(ushort i_Row, ushort i_Col, ref int io_ToolIndex) // Place Checker pieces According to row and col index
         {
             if (i_Row % 2 == 0)
             {
                 if (i_Col % 2 != 0)
                 {
-                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                    io_ToolIndex++;
                 }
             }
             else
             {
                 if (i_Col % 2 == 0)
                 {
-                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.MainPlayerTool, i_Row, i_Col);
+                    io_ToolIndex++;
                 }
             }
         }
 
-        private void setSecondToolPosition(ushort i_BoardSize, ushort i_Row, ushort i_Col, int i_ToolIndex) // Place Checker pieces According to row and col index
+        private void setSecondToolPosition(ushort i_BoardSize, ushort i_Row, ushort i_Col, ref int io_ToolIndex) // Place Checker pieces According to row and col index
         {
-            ushort rowIndex = (ushort) (i_BoardSize - i_Row);
+            ushort rowIndex = (ushort) (i_BoardSize - i_Row - 1);
             if (i_Row % 2 == 0)
             {
                 if (i_Col % 2 != 0)
                 {
-                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerTool, rowIndex, i_Col);
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerTool, rowIndex, i_Col);
+                    io_ToolIndex++;
                 }
             }
             else
             {
                 if (i_Col % 2 == 0)
                 {
-                    m_CheckersPiece[i_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerTool, rowIndex, i_Col);
+                    m_CheckersPiece[io_ToolIndex] = new CheckersPiece(CheckersPiece.ePieceKind.SecondPlayerTool, rowIndex, i_Col);
+                    io_ToolIndex++;
                 }
             }
         }
@@ -199,14 +213,14 @@ namespace Player
         {
             if (PlayerNumber == ePlayerType.MainPlayer)
             {
-                if (hasReachedFinalRowUp(io_CurrentCheckerPiece.RowIndex))
+                if (hasReachedFinalRowDown(i_GameBoard.SizeOfBoard, io_CurrentCheckerPiece.RowIndex))
                 {
                     io_CurrentCheckerPiece.BecomeKing();
                 }
             }
             else
             {
-                if (hasReachedFinalRowDown(i_GameBoard.SizeOfBoard, io_CurrentCheckerPiece.RowIndex))
+                if (hasReachedFinalRowUp(io_CurrentCheckerPiece.RowIndex))
                 {
                     io_CurrentCheckerPiece.BecomeKing();
                 }
@@ -351,10 +365,10 @@ namespace Player
 
         public void MakeUserMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
         {
-            ushort rowIndex;
-            ushort colIndex = io_GameBoard.GetIndexInBoard(ref i_PositionFrom, out rowIndex);
+            //ushort rowIndex;
+            //ushort colIndex = io_GameBoard.GetIndexInBoard(ref i_PositionFrom, out rowIndex);
 
-            updateCurrentCheckerPiece(rowIndex, colIndex);
+            //updateCurrentCheckerPiece(rowIndex, colIndex);
             if (!m_CurrentCheckerPiece.IsKing)
             {
                 MoveUtils.MoveRegularTool(this, ref io_GameBoard, ref io_CurrentChecker, i_PositionFrom, i_PositionTo);
@@ -431,7 +445,6 @@ namespace Player
 
         private void updateCurrentCheckerPiece(ushort i_RowIndex, ushort i_ColIndex)
         {
-            CheckersPiece checkerPieceToMove = null;
 
             foreach (CheckersPiece checkerPiece in m_CheckersPiece)
             {
@@ -487,22 +500,39 @@ namespace Player
 
             if (m_PlayerNumber == ePlayerType.MainPlayer)
             {
-                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
-                if (m_CurrentCheckerPiece.IsKing)
-                {
-                    CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
-                }
-            }
-            else
-            {
                 CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
                 if (m_CurrentCheckerPiece.IsKing)
                 {
                     CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
                 }
             }
+            else
+            {
+                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
+            }
 
             return captureList;
         }
+
+        //private void MakeComputerBestMove(Board i_GameBoard, User i_RivalPlayer)
+        //{
+        //    CheckersPiece currentCheckersPiece = null;
+        //    CheckersPiece rivalCheckersPiece = null;
+
+        //    // If the computer has the option to capture.
+        //    if (GetMovesAndUpdate(i_GameBoard, i_RivalPlayer))
+        //    {
+        //        // currentCheckersPiece
+        //        // MakeCapture
+        //    }
+        //    else
+        //    {
+        //        // MakeMove
+        //    }
+        //}
     }
 }
