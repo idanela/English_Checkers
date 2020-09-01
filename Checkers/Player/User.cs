@@ -117,36 +117,29 @@ namespace Player
 
         public void ininitializePositions(int startIndex, Board i_GameBoard, int i_NumOfPieces)
         {
-            foreach (CheckersPiece checker in m_CheckersPiece)
+            ushort chekerPieceIndex = 0;
+
+            for (int k = 0; k  <m_CheckersPiece.Length; k++)
             {
-                while (i_NumOfPieces != 0)
+                for(int i = 0; i < i_GameBoard.SizeOfBoard; i++ )
                 {
-                    if (startIndex == 0)
+                    for (int j = 0; j < i_GameBoard.SizeOfBoard; j++)
                     {
-                        for (int i = 0; i < i_GameBoard.SizeOfBoard; i++)
+                        if (startIndex == 0)
                         {
-                            for (int j = 0; j < i_GameBoard.SizeOfBoard; j++)
+                            if (i_GameBoard.CheckersBoard[i, j] == 'O')
                             {
-                                if (i_GameBoard.CheckersBoard[i, j] == 'O')
-                                {
-                                    checker.changePosition((ushort)i, (ushort)j);
-                                }
+                                m_CheckersPiece[chekerPieceIndex].changePosition((ushort)i, (ushort)j);
+                                chekerPieceIndex++;
                             }
-
                         }
-                    }
-                    else
-                    {
-                        for (int i = i_GameBoard.SizeOfBoard - 1; i >= 0; i--)
+                        else
                         {
-                            for (int j = i_GameBoard.SizeOfBoard - 1; j < i_GameBoard.SizeOfBoard; j--)
+                            if (i_GameBoard.CheckersBoard[i, j] == 'X')
                             {
-                                if (i_GameBoard.CheckersBoard[i, j] == 'X')
-                                {
-                                    checker.changePosition((ushort)i, (ushort)j);
-                                }
+                                m_CheckersPiece[chekerPieceIndex].changePosition((ushort)i, (ushort)j);
+                                chekerPieceIndex++;
                             }
-
                         }
                     }
                 }
