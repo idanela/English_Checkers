@@ -17,10 +17,18 @@ namespace Player
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
                     canCapture = CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (checkerPiece.IsKing)
+                    {
+                        CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    }
                 }
                 else
                 {
                     canCapture = CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (checkerPiece.IsKing)
+                    {
+                        CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    }
                 }
             }
 
