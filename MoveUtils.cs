@@ -21,18 +21,18 @@ namespace Player
 
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
-                    getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
-                    if (checkerPiece.IsKing)
-                    {
-                        getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
-                    }
-                }
-                else
-                {
                     getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
                     if (checkerPiece.IsKing)
                     {
                         getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    }
+                }
+                else
+                {
+                    getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    if (checkerPiece.IsKing)
+                    {
+                        getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
                     }
                 }
             }
