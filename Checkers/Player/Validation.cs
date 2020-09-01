@@ -193,8 +193,8 @@ namespace Player
 
         public static void ParsePositions(string i_StrInput, ref string io_PositionFrom, ref string io_PositionTo)
         {
-            io_PositionFrom = i_StrInput.Substring(k_StartPositionFrom, k_SubStringLength);
-            io_PositionTo = i_StrInput.Substring(k_StartPositionTo, k_SubStringLength);
+            io_PositionTo = i_StrInput.Substring(k_StartPositionFrom, k_SubStringLength);
+            io_PositionFrom = i_StrInput.Substring(k_StartPositionTo, k_SubStringLength);
         }
     }
 }

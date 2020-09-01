@@ -136,17 +136,12 @@ namespace UI
 
        public static bool checkIndexes(Board i_Board, string i_Location, string i_Destination)
         {
-            bool isValidIndexesMove = false;
-            ushort colIndex = ushort.Parse(i_Location[0].ToString());
-            ushort rowIndex = ushort.Parse(i_Location[1].ToString());
-            ushort destinationRowIndex = ushort.Parse(i_Destination[0].ToString());
-            ushort destinationColIndex = ushort.Parse(i_Destination[1].ToString());
-
-            if(i_Board.CheckersBoard[colIndex,rowIndex] == 'K' || i_Board.CheckersBoard[colIndex, rowIndex] == 'U')
-            {
-                isValidIndexesMove = i_Board.IsCheckerAvailable(destinationRowIndex, destinationColIndex) &&
-                    (Math.Abs(colIndex - destinationColIndex) == 1 && Math.Abs(rowIndex - destinationRowIndex) == 1);
-            }
+            ushort colIndex = (ushort) (i_Location[0] - 'A');
+            ushort rowIndex = (ushort)(i_Location[1] - 'a');
+            ushort destinationRowIndex = (ushort) (i_Destination[0] -'A');
+            ushort destinationColIndex = (ushort)(i_Destination[1] - 'a');
+            bool isValidIndexesMove = colIndex >= 0 && colIndex < i_Board.SizeOfBoard && rowIndex >= 0 && rowIndex < i_Board.SizeOfBoard
+                && destinationRowIndex >= 0 && destinationRowIndex < i_Board.SizeOfBoard && destinationRowIndex >= 0 && destinationRowIndex < i_Board.SizeOfBoard;
 
             return isValidIndexesMove;
         }
@@ -161,7 +156,7 @@ namespace UI
 
         public static string  PlayerTurn( Board i_GameBoard, User i_player)
         {
-            Console.WriteLine(i_player.Name+"'s turn, pleade insert a move:");
+            Console.WriteLine(i_player.Name+"'s turn");
             string currentMove = UserIntterface.GetValidMove(i_GameBoard);
 
             return currentMove;

@@ -46,11 +46,9 @@ namespace Game
             while (!hasGameFinished)
             {
                 i_GameBoard.printBoard();
-                currentMove = UserIntterface.GetValidMove(i_GameBoard);
-
                 if (isFirstPlayerTurn)
                 {
-                    UserIntterface.PlayerTurn(i_GameBoard, i_FirstPlayer);
+                    currentMove = UserIntterface.PlayerTurn(i_GameBoard, i_FirstPlayer);
                     Validation.ParsePositions(currentMove, ref currentLocation, ref destinationPosition);
                     if (currentMove =="Q")
                     {
