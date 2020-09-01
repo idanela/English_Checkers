@@ -22,10 +22,18 @@ namespace Player
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
                     getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    if (checkerPiece.IsKing)
+                    {
+                        getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    }
                 }
                 else
                 {
                     getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    if (checkerPiece.IsKing)
+                    {
+                        getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    }
                 }
             }
 
@@ -127,7 +135,7 @@ namespace Player
             
             // If there is not(!) a rival checker piece in the way.
             // Check valid move - include: inborder, valid input, is empty cell.
-            Validation.CheckValidMoveRegularTool(io_GameBoard, i_CurrentPlayer, io_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
+            // Validation.CheckValidMoveRegularTool(io_GameBoard, i_CurrentPlayer, io_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
             
             // Update board - new tool position.
             io_GameBoard.UpdateBoardAccordingToPlayersMove(
@@ -145,7 +153,7 @@ namespace Player
 
             // If there is not(!) a rival checker piece in the way.
             // Check valid move - include: inborder, valid input, is empty cell.
-            Validation.CheckValidMoveKingTool(io_GameBoard, i_CurrentPlayer, io_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
+            // Validation.CheckValidMoveKingTool(io_GameBoard, i_CurrentPlayer, io_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
 
             // Update board - new tool position.
             io_GameBoard.UpdateBoardAccordingToPlayersMove(
