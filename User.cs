@@ -496,22 +496,5 @@ namespace Player
 
             return captureList;
         }
-
-        private void MakeComputerBestMove(Board i_GameBoard, User i_RivalPlayer)
-        {
-            CheckersPiece currentCheckersPiece = null;
-            CheckersPiece rivalCheckersPiece = null;
-
-            // If the computer has the option to capture.
-            if (GetMovesAndUpdate(i_GameBoard, i_RivalPlayer))
-            {
-                // currentCheckersPiece
-                // MakeCapture
-            }
-            else
-            {
-                // MakeMove
-            }
-        }
     }
 }
