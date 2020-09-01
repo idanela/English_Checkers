@@ -103,11 +103,52 @@ namespace Player
 
 
         // Methods:
-        public void InitializeCheckersArray(int i_BoardSize)
+        public void InitializeCheckersArray(Board i_GameBoard)
         {
-            int sizeOfPieces = ((i_BoardSize / 2) * 3);
+            int numOfPieces = ((i_GameBoard.SizeOfBoard / 2) * 3);
+            int starIndex = 0;
+            m_CheckersPiece = new CheckersPiece[numOfPieces];
+            if(m_CheckerPieceKind == CheckersPiece.ePieceKind.MainPlayerTool)
+            {
+                starIndex = i_GameBoard.SizeOfBoard - 1;
+            }
+            this.ininitializePositions(starIndex, i_GameBoard, numOfPieces);
+        }
 
-            m_CheckersPiece = new CheckersPiece[sizeOfPieces];
+       public void ininitializePositions(int startIndex, Board i_GameBoard, int i_NumOfPieces)
+        {
+            foreach (CheckersPiece checker in m_CheckersPiece)
+            {
+                while (i_NumOfPieces != 0)
+                {
+                    if (startIndex == 0)
+                    {             
+                        for(int i = 0; i <i_GameBoard.SizeOfBoard; i++ )
+                        {
+                            for (int j = 0; j < i_GameBoard.SizeOfBoard; j++)
+                            {
+                                if (i_GameBoard.CheckersBoard[i, j] == 'O')
+                                {
+                                    checker.changePosition((ushort)i, (ushort)j);
+                                }
+                            }
+
+                        }        
+                }
+            else
+            {
+                        for (int i = i_GameBoard.SizeOfBoard - 1; i >= 0; i--)
+                        {
+                            for (int j = i_GameBoard.SizeOfBoard - 1; j < i_GameBoard.SizeOfBoard; j--)
+                            {
+                                if (i_GameBoard.CheckersBoard[i, j] == 'X')
+                                {
+                                    checker.changePosition((ushort)i, (ushort)j);
+                                }
+                            }
+
+                        }
+            }
         }
 
         public void GetAndCalculateScore()

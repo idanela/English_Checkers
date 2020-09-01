@@ -48,6 +48,8 @@ namespace Game
         private static void playGame(User i_FirstPlayer, User i_SecondPlayer, Board i_GameBoard)
         {
             i_GameBoard.InitializeBoard();
+            i_FirstPlayer.InitializeCheckersArray
+            i_SecondPlayer.
             bool hasGameFinished = false;
             bool isFirstPlayerTurn = true;
             string currentPosition= string.Empty;

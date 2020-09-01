@@ -126,7 +126,7 @@ namespace UI
                 char.IsLower(i_moveToPreform[4]);
         }
 
-       public bool  IsValidBoardMove(string i_moveToPreform, Board i_Board)
+       public static bool  IsValidBoardMove(string i_moveToPreform, Board i_Board)
         {
             string location = string.Empty;
             string destination = string.Empty;
@@ -146,9 +146,10 @@ namespace UI
             if(i_Board.CheckersBoard[colIndex,rowIndex] == 'K' || i_Board.CheckersBoard[colIndex, rowIndex] == 'U')
             {
                 isValidIndexesMove = i_Board.IsCheckerAvailable(destinationRowIndex, destinationColIndex) &&
-                    (Math.Abs(colIndex - destinationColIndex) == 1 && Math.Abs(rowIndex - destinationRowIndex) == 1)
-                    );
+                    (Math.Abs(colIndex - destinationColIndex) == 1 && Math.Abs(rowIndex - destinationRowIndex) == 1);
             }
+
+            return isValidIndexesMove;
 
         }
     }
