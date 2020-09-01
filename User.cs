@@ -489,15 +489,20 @@ namespace Player
         public bool GetMovesAndUpdate(Board i_GameBoard, User i_RivalPlayer)
         {
             bool canCapture = true;
+            Dictionary<string, List<string>> moves = new Dictionary<string, List<string>>();
 
             // If the current checker didn't make a move the turn before.
             if (m_CurrentCheckerPiece == null)
             {
                 // If the user can eat, he must! the list will reture as ref value. If not, the list will return the regular moves list.
-                if (!CaptureUtils.CanUserCapture(i_GameBoard, this, i_RivalPlayer, ref m_Moves))
+                if (!CaptureUtils.CanUserCapture(i_GameBoard, this, i_RivalPlayer, ref moves))
                 {
                     m_Moves = MoveUtils.CreateRegularMoves(this, i_GameBoard);
                     canCapture = false;
+                }
+                else
+                {
+                    m_Moves = moves;
                 }
             }
             // If there's a "soldier" that can capture again.
