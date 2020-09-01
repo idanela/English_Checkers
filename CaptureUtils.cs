@@ -9,25 +9,24 @@ namespace Player
         public static bool CanUserCapture(Board i_GameBoard, User i_CurrentPlayer, User i_RivalPlayer,
                                           ref Dictionary<string, List<string>> io_CapturePositions)
         {
-            int i = 0;
             bool canCapture = false;
 
             foreach (CheckersPiece checkerPiece in i_CurrentPlayer.Pieces)
             {
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
-                    canCapture = CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
-                    if (checkerPiece.IsKing)
-                    {
-                        CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
-                    }
-                }
-                else
-                {
                     canCapture = CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
                     if (checkerPiece.IsKing)
                     {
                         CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    }
+                }
+                else
+                {
+                    canCapture = CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (checkerPiece.IsKing)
+                    {
+                        CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
                     }
                 }
             }
@@ -40,7 +39,7 @@ namespace Player
         {
             bool canCapture;
             ushort rowIndex, colIndex;
-            ushort newRowIndex, newColIndex;
+            // ushort newRowIndex, newColIndex;
             CheckersPiece rivalCheckerPieceUpRight, rivalCheckerPieceUpLeft;
 
             // Check if can capture up-right rival.
@@ -69,7 +68,7 @@ namespace Player
         {
             bool canCapture;
             ushort rowIndex, colIndex;
-            ushort newRowIndex, newColIndex;
+            // ushort newRowIndex, newColIndex;
             CheckersPiece rivalCheckerPieceDownRight, rivalCheckerPieceDownLeft;
 
             // Check if can capture down-right rival.
