@@ -115,15 +115,15 @@ namespace Player
             this.ininitializePositions(starIndex, i_GameBoard, numOfPieces);
         }
 
-       public void ininitializePositions(int startIndex, Board i_GameBoard, int i_NumOfPieces)
+        public void ininitializePositions(int startIndex, Board i_GameBoard, int i_NumOfPieces)
         {
             foreach (CheckersPiece checker in m_CheckersPiece)
             {
                 while (i_NumOfPieces != 0)
                 {
                     if (startIndex == 0)
-                    {             
-                        for(int i = 0; i <i_GameBoard.SizeOfBoard; i++ )
+                    {
+                        for (int i = 0; i < i_GameBoard.SizeOfBoard; i++)
                         {
                             for (int j = 0; j < i_GameBoard.SizeOfBoard; j++)
                             {
@@ -133,10 +133,10 @@ namespace Player
                                 }
                             }
 
-                        }        
-                }
-            else
-            {
+                        }
+                    }
+                    else
+                    {
                         for (int i = i_GameBoard.SizeOfBoard - 1; i >= 0; i--)
                         {
                             for (int j = i_GameBoard.SizeOfBoard - 1; j < i_GameBoard.SizeOfBoard; j--)
@@ -148,6 +148,8 @@ namespace Player
                             }
 
                         }
+                    }
+                }
             }
         }
 
