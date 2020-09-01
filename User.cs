@@ -488,10 +488,18 @@ namespace Player
             if (m_PlayerNumber == ePlayerType.MainPlayer)
             {
                 CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
             }
             else
             {
                 CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
             }
 
             return captureList;
