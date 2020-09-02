@@ -15,7 +15,11 @@ namespace Player
             {
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
-                    canCapture = CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions))
+                    {
+                        canCapture = true;
+                    }
+
                     if (checkerPiece.IsKing)
                     {
                         CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
@@ -23,7 +27,11 @@ namespace Player
                 }
                 else
                 {
-                    canCapture = CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions))
+                    {
+                        canCapture = true;
+                    }
+
                     if (checkerPiece.IsKing)
                     {
                         CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
