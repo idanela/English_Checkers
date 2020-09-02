@@ -1,7 +1,7 @@
 using System;
 using CheckerPiece;
 using CheckersBoard;
-
+using UI;
 namespace Player
 {
     public struct Validation
@@ -29,16 +29,16 @@ namespace Player
             // Checks if the given string's positions are valid. Means we got for exmaple 'Aa'. (A is column, a is row).
             while (!IsValidInput(i_BoardSize, io_PositionFrom) || !IsValidInput(i_BoardSize, io_PositionTo))
             {
-                Console.WriteLine("Please enter valid indexes (for example: 'Aa').");
-                UserTurnConversation(i_PlayerName, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.PrintErrorMessage("Please enter valid indexes (for example: 'Aa').");
+                UserIntterface.UserTurnConversation(i_PlayerName, ref io_PositionFrom, ref io_PositionTo);
             }
 
             // Check if the given string's positions are in the border of the game board.
             while (!IsValidPosition(i_BoardSize, positionFromRow, positionFromCol) ||
                    !IsValidPosition(i_BoardSize, positionToRow, positionToCol))
             {
-                Console.WriteLine("Please enter valid position.");
-                UserTurnConversation(i_PlayerName, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.PrintErrorMessage("Please enter valid position.");
+                UserIntterface.UserTurnConversation(i_PlayerName, ref io_PositionFrom, ref io_PositionTo);
             }
 
             // Give the position params the right value, after validation check.
@@ -80,8 +80,8 @@ namespace Player
             while (!i_GameBoard.IsCheckerAvailable((ushort)(io_PositionTo[k_RowIndex] - 'a'),
                                                    (ushort)(io_PositionTo[k_ColIndex] - 'A')))
             {
-                Console.WriteLine("The request position to move is not legal. Please enter position, which the cell is free to move.");
-                UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.PrintErrorMessage("The request position to move is not legal. Please enter position, which the cell is free to move.");
+                UserIntterface.UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
             }
 
             if (i_CurrentPlayer.CheckerKind == CheckersPiece.ePieceKind.SecondPlayerKing/*CheckersPiece.ePieceKind.O*/)
@@ -102,8 +102,8 @@ namespace Player
         {
             while (!isCorrectMoveDownWay(i_CurrentCheckerPiece, io_PositionTo))
             {
-                Console.WriteLine("The request position to move is not legal. You can make only diagonal move.");
-                UserTurnConversation(i_Name, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.PrintErrorMessage("The request position to move is not legal. You can make only diagonal move.");
+                UserIntterface.UserTurnConversation(i_Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
@@ -113,7 +113,7 @@ namespace Player
             while (!isCorrectMoveUpWay(i_CurrentCheckerPiece, io_PositionTo))
             {
                 Console.WriteLine("The request position to move is not legal. You can make only diagonal move.");
-                UserTurnConversation(i_Name, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.UserTurnConversation(i_Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
@@ -139,8 +139,8 @@ namespace Player
             while (!i_GameBoard.IsCheckerAvailable((ushort)(io_PositionTo[k_RowIndex] - 'a'),
                 (ushort)(io_PositionTo[k_ColIndex] - 'A')))
             {
-                Console.WriteLine("The request position to move is not legal. Please enter position, which the cell is free to move.");
-                UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
+                                UserIntterface.PrintErrorMessage("The request position to move is not legal. Please enter position, which the cell is free to move.");
+                UserIntterface.UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
             }
 
             // The current player can move only down and in diagonal move.
@@ -153,8 +153,8 @@ namespace Player
         {
             while (!isCorrectMoveKingWay(i_CurrentCheckerPiece, i_BoardSize, io_PositionTo))
             {
-                Console.WriteLine("The request position to move is not legal. You can make only diagonal move.");
-                UserTurnConversation(i_Name, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.PrintErrorMessage("The request position to move is not legal. You can make only diagonal move.");
+                UserIntterface.UserTurnConversation(i_Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
@@ -180,16 +180,7 @@ namespace Player
                     i_CurrentCheckerPiece.RowIndex + 1 == i_PositionTo[k_RowIndex] - 'a');
         }
 
-        public static void UserTurnConversation(string i_Name, ref string io_PositionFrom, ref string io_PositionTo)
-        {
-            string move = null;
-
-            // Pass position from parameter, and change msg.
-            Console.WriteLine("Please enter where you want to move.");
-            Console.Write(i_Name + "'s turn: ");
-            move = Console.ReadLine();
-            ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
-        }
+      
 
         public static void ParsePositions(string i_StrInput, ref string io_PositionFrom, ref string io_PositionTo)
         {

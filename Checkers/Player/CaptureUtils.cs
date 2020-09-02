@@ -74,7 +74,7 @@ namespace Player
 
         public static bool CanCaptureDown(Board i_GameBoard, CheckersPiece i_Current, List<CheckersPiece> i_RivalCheckersPiece,
                                           ref Dictionary<string, List<string>> io_CapturePositions)
-        { 
+        {
             bool canCaptureRight, canCaptureLeft;
             ushort rowIndex, colIndex;
             // ushort newRowIndex, newColIndex;
@@ -145,11 +145,11 @@ namespace Player
             return i_ChckerPiece.ColIndex == i_ColIndex && i_ChckerPiece.RowIndex == i_RowIndex;
         }
 
-        public static void CaptureRivalCheckerPiece(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece, ref string io_PositionTo,
+        public static void CaptureRivalCheckerPiece(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece, string i_PositionTo,
                                                     ref CheckersPiece io_RivalCheckerPiece)
         {
             ushort nextColIndex;
-            ushort nextRowIndex = i_GameBoard.GetIndexInBoard(ref io_PositionTo, out nextColIndex);
+            ushort nextRowIndex = i_GameBoard.GetIndexInBoard(ref i_PositionTo, out nextColIndex);
 
             // Update board after eating, and move the current checker to his next place.
             i_GameBoard.UpdateAfterEating(io_CurrentCheckerPiece.RowIndex, io_CurrentCheckerPiece.ColIndex,

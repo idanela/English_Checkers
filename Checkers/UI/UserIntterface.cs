@@ -1,6 +1,7 @@
 ﻿using System;
 using CheckersBoard;
 using CheckerPiece;
+using Validation;
 namespace UI
 {
    public class UserIntterface
@@ -48,6 +49,7 @@ namespace UI
         private static ushort getValidBoardSize()
         {
             ushort sizeOfBoard;
+
             while (!ushort.TryParse(Console.ReadLine(), out sizeOfBoard) || !CheckersBoard.Board.isValidBoardSize(sizeOfBoard))
             {
                 Console.WriteLine("Invalid input please insert size again.");
@@ -128,7 +130,7 @@ namespace UI
         {
             string location = string.Empty;
             string destination = string.Empty;
-            Validation.ParsePositions(i_moveToPreform, ref location, ref destination);
+            Validate.ParsePositions(i_moveToPreform, ref location, ref destination);
             
             return checkIndexes(i_Board, location, destination);
         }
@@ -168,6 +170,21 @@ namespace UI
             return currentMove;
         }
 
+        public static void UserTurnConversation(string i_Name, ref string io_PositionFrom, ref string io_PositionTo)
+        {
+            string move = null;
+
+            // Pass position from parameter, and change msg.
+            Console.WriteLine("Please enter where you want to move.");
+            Console.Write(i_Name + "'s turn: ");
+            move = Console.ReadLine();
+            //Validate.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+        }
+
+        public static void PrintErrorMessage(String i_ErrorMsg)
+        {
+            Console.WriteLine(i_ErrorMsg);
+        }
     }
 
 }

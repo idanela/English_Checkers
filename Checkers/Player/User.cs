@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using CheckerPiece;
 using CheckersBoard;
 using UI;
+
 namespace Player
 {
     public struct User
     {
         // Constants:
-        private const char k_Quit = 'Q';
-        private const char k_Yes = 'Y';
-        private const char k_Empty = ' ';
         private const short k_RowIndex = 1;
         private const short k_ColIndex = 0;
-        private const char k_MoveUp = 'X';
-        private const char k_MoveDown = 'O';
-        private const char k_MoveUpKing = 'K';
-        private const char k_MoveDownKing = 'U';
 
         // Data members:
         private readonly string m_Name;
@@ -220,16 +214,6 @@ namespace Player
             io_CurrentCheckerPiece.GotToOtherSideOfBoard(ref i_GameBoard);
         }
 
-        private static bool hasReachedFinalRowDown(ushort i_BoardSize, ushort i_CurrentRow)
-        {
-            return i_CurrentRow == i_BoardSize - 1;
-        }
-
-        private static bool hasReachedFinalRowUp(ushort i_CurrentRow)
-        {
-            return i_CurrentRow == 0;
-        }
-
         public bool MakeMove(ref Board io_GameBoard, User i_RivalPlayer, string i_PositionFrom, string i_PositionTo)
         {
             bool isGameOver = false;
@@ -237,9 +221,9 @@ namespace Player
             if (GetMovesAndUpdate(io_GameBoard, i_RivalPlayer))
             {
                 playCapture(io_GameBoard, ref i_PositionFrom, ref i_PositionTo, i_RivalPlayer.Pieces);
-                if (createCaptureMoveList(io_GameBoard,i_RivalPlayer).Count == 0)
+                if (createCaptureMoveList(io_GameBoard, i_RivalPlayer).Count == 0)
                 {
-                    m_CurrentCheckerPiece = null; 
+                    m_CurrentCheckerPiece = null;
                 }
             }
             else
@@ -258,6 +242,61 @@ namespace Player
             return isGameOver;
         }
 
+
+        public bool GetMovesAndUpdate(Board i_GameBoard, User i_RivalPlayer)
+        {
+            bool canCapture = true;
+            Dictionary<string, List<string>> moves = new Dictionary<string, List<string>>();
+
+            // If the current checker didn't make a move the turn before.
+            if (m_CurrentCheckerPiece == null)
+            {
+                // If the user can eat, he must! the list will return as ref value. If not, the list will return the regular moves list.
+                if (!CaptureUtils.CanUserCapture(i_GameBoard, this, i_RivalPlayer, ref moves))
+                {
+                    m_Moves = MoveUtils.CreateRegularMoves(this, i_GameBoard);
+                    canCapture = false;
+                }
+                else
+                {
+                    m_Moves = moves;
+                }
+            }
+            // If there's a "soldier" that can capture again.
+            else
+            {
+                // If there's capture in a row.
+                m_Moves = createCaptureMoveList(i_GameBoard, i_RivalPlayer);
+            }
+
+            return canCapture;
+        }
+
+        // Certain Tool's Capture Move List:
+        private Dictionary<string, List<string>> createCaptureMoveList(Board i_GameBoard, User i_RivalPlayer)
+        {
+            Dictionary<string, List<string>> captureList = new Dictionary<string, List<string>>();
+
+            if (m_PlayerNumber == ePlayerType.MainPlayer)
+            {
+                CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
+            }
+            else
+            {
+                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                if (m_CurrentCheckerPiece.IsKing)
+                {
+                    CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
+                }
+            }
+
+            return captureList;
+        }
+
         private void playCapture(Board io_GameBoard, ref string io_PositionFrom, ref string io_PositionTo, List<CheckersPiece> i_RivalPlayerPieces)
         {
             CheckersPiece checkerPieceToMove = null;
@@ -267,7 +306,7 @@ namespace Player
                 playerMustCapture(io_GameBoard, ref io_PositionFrom, ref io_PositionTo,
                     ref checkerPieceToMove, i_RivalPlayerPieces, ref rivalCheckerPiece);
             }
-            
+
             // Checks if there's an optional capture, and updating the data structure.
             MakeCapture(io_GameBoard, ref checkerPieceToMove, ref io_PositionTo, ref rivalCheckerPiece);
             checkerPieceToMove.GotToOtherSideOfBoard(ref io_GameBoard);
@@ -275,47 +314,36 @@ namespace Player
             i_RivalPlayerPieces.Remove(rivalCheckerPiece);
         }
 
-        private void playMove(Board io_GameBoard, ref string io_PositionFrom, ref string io_PositionTo)
-        {
-            CheckersPiece checkerPieceToMove = null;
-
-            if (!IsComputer)
-            {
-                playerMustMoveValid(io_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref checkerPieceToMove);
-                MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, io_PositionFrom, io_PositionTo);
-            }
-            else
-            {
-                MakeComputerMove(ref io_GameBoard, ref checkerPieceToMove);
-            }
-        }
-
         private void playerMustCapture(Board i_GameBoard, ref string io_PositionFrom, ref string io_PositionTo,
             ref CheckersPiece io_CurrentChecker, List<CheckersPiece> i_RivalPieces, ref CheckersPiece io_RivalChecker)
         {
-            while (!isValidCapture(i_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref io_CurrentChecker, i_RivalPieces,
+            while (!isValidCapture(i_GameBoard, io_PositionFrom, io_PositionTo, ref io_CurrentChecker, i_RivalPieces,
                 ref io_RivalChecker))
             {
-                Console.WriteLine("Invalid move. player must capture.");
+                UserIntterface.PrintErrorMessage("Invalid move. player must capture.");
                 string move = UserIntterface.GetValidMove(i_GameBoard);
-                Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                if (move != "Q")
+                {
+                    Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                }
+                else
+                {
+                    
+                }
                 //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
-        private void playerMustMoveValid(Board i_GameBoard, ref string io_PositionFrom, ref string io_PositionTo, ref CheckersPiece io_CurrentChecker)
+        public void MakeCapture(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece, ref string io_PositionTo,
+            ref CheckersPiece io_RivalCheckerPiece)
         {
-            while (!isValidMove(i_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref io_CurrentChecker))
-            {
-                Console.WriteLine("Invalid move. player must move with to free positions.");
-                string move = UserIntterface.GetValidMove(i_GameBoard);
-                Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
-                //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
-            }
+            CaptureUtils.CaptureRivalCheckerPiece(i_GameBoard, ref io_CurrentCheckerPiece,
+                io_PositionTo, ref io_RivalCheckerPiece);
+            m_CurrentCheckerPiece = io_CurrentCheckerPiece;
         }
 
-        private bool isValidCapture(Board i_GameBoard, ref string io_PositionFrom, ref string io_PositionTo,
-                                 ref CheckersPiece io_CurrentChecker, List<CheckersPiece> i_RivalPieces, ref CheckersPiece io_RivalChecker)
+        private bool isValidCapture(Board i_GameBoard, string io_PositionFrom, string io_PositionTo,
+            ref CheckersPiece io_CurrentChecker, List<CheckersPiece> i_RivalPieces, ref CheckersPiece io_RivalChecker)
         {
             bool isValid = false;
             ushort rowIndex, colIndex;
@@ -351,7 +379,7 @@ namespace Player
         }
 
         private void changeRowIndex(ref ushort io_RowIndex, bool i_Up)
-        { 
+        {
             if (!i_Up)
             {
                 io_RowIndex--;
@@ -374,7 +402,34 @@ namespace Player
             }
         }
 
-        private bool isValidMove(Board i_GameBoard, ref string i_PositionFrom, ref string i_PositionTo, ref CheckersPiece io_CurrentChecker)
+        private void playMove(Board io_GameBoard, ref string io_PositionFrom, ref string io_PositionTo)
+        {
+            CheckersPiece checkerPieceToMove = null;
+
+            if (!IsComputer)
+            {
+                playerMustMoveValid(io_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref checkerPieceToMove);
+                MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, io_PositionFrom, io_PositionTo);
+            }
+            else
+            {
+                MakeComputerMove(ref io_GameBoard, ref checkerPieceToMove);
+            }
+        }
+
+        private void playerMustMoveValid(Board i_GameBoard, ref string io_PositionFrom, ref string io_PositionTo,
+            ref CheckersPiece io_CurrentChecker)
+        {
+            while (!isValidMove(i_GameBoard, io_PositionFrom, io_PositionTo, ref io_CurrentChecker))
+            {
+                UserIntterface.PrintErrorMessage("Invalid move. player must move with to free positions.");
+                string move = UserIntterface.GetValidMove(i_GameBoard);
+                Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
+            }
+        }
+
+        private bool isValidMove(Board i_GameBoard, string i_PositionFrom, string i_PositionTo, ref CheckersPiece io_CurrentChecker)
         {
             bool isValid = false;
             ushort rowIndex, colIndex;
@@ -415,43 +470,31 @@ namespace Player
 
         public void MakeUserMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
         {
-            //ushort rowIndex;
-            //ushort colIndex = io_GameBoard.GetIndexInBoard(ref io_PositionFrom, out rowIndex);
-
-            //updateCurrentCheckerPiece(rowIndex, colIndex);
             if (!io_CurrentChecker.IsKing)
             {
-                MoveUtils.MoveRegularTool(this, ref io_GameBoard, ref io_CurrentChecker, i_PositionFrom, i_PositionTo);
+                MoveUtils.MoveRegularTool(ref io_GameBoard, ref io_CurrentChecker, i_PositionTo);
                 MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
             }
             else
             {
-                MoveUtils.MoveKingTool(this, ref io_GameBoard, ref io_CurrentChecker, i_PositionFrom, i_PositionTo);
+                MoveUtils.MoveKingTool(ref io_GameBoard, ref io_CurrentChecker, i_PositionTo);
             }
         }
 
+
+        // Computer Player Methods:
         public void MakeComputerMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker)
         {
             string[] positions = getRandomMove(io_GameBoard, ref io_CurrentChecker);
 
             if (!io_CurrentChecker.IsKing)
             {
-                MoveUtils.MoveRegularTool(
-                    this,
-                    ref io_GameBoard,
-                    ref io_CurrentChecker,
-                    positions[0],
-                    positions[1]);
+                MoveUtils.MoveRegularTool(ref io_GameBoard, ref io_CurrentChecker, positions[1]);
                 MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
             }
             else
             {
-                MoveUtils.MoveKingTool(
-                    this,
-                    ref io_GameBoard,
-                    ref io_CurrentChecker,
-                    positions[0],
-                    positions[1]);
+                MoveUtils.MoveKingTool(ref io_GameBoard, ref io_CurrentChecker, positions[1]);
             }
         }
 
@@ -511,73 +554,6 @@ namespace Player
             }
 
             return foundCheckerPiece;
-        }
-
-        public void MakeCapture(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece, ref string io_PositionTo,
-                                ref CheckersPiece io_RivalCheckerPiece)
-        {
-            CaptureUtils.CaptureRivalCheckerPiece(i_GameBoard, ref io_CurrentCheckerPiece,
-                                                  ref io_PositionTo, ref io_RivalCheckerPiece);
-            m_CurrentCheckerPiece = io_CurrentCheckerPiece;
-        }
-
-        public bool GetMovesAndUpdate(Board i_GameBoard, User i_RivalPlayer)
-        {
-            bool canCapture = true;
-            Dictionary<string, List<string>> moves = new Dictionary<string, List<string>>();
-
-            // If the current checker didn't make a move the turn before.
-            if (m_CurrentCheckerPiece == null)
-            {
-                // If the user can eat, he must! the list will reture as ref value. If not, the list will return the regular moves list.
-                if (!CaptureUtils.CanUserCapture(i_GameBoard, this, i_RivalPlayer, ref moves))
-                {
-                    m_Moves = MoveUtils.CreateRegularMoves(this, i_GameBoard);
-                    canCapture = false;
-                }
-                else
-                {
-                    m_Moves = moves;
-                }
-            }
-            // If there's a "soldier" that can capture again.
-            else
-            {
-                // If there's capture in a row.
-                m_Moves = createCaptureMoveList(i_GameBoard, i_RivalPlayer);
-                // Check if there are no more captures to do in a row with the current checker.
-                if (Moves.Count == 0)
-                {
-                    m_CurrentCheckerPiece = null;
-                }
-            }
-
-            return canCapture;
-        }
-
-        // Certain Tool's Capture Move List:
-        private Dictionary<string, List<string>> createCaptureMoveList(Board i_GameBoard, User i_RivalPlayer)
-        {
-            Dictionary<string, List<string>> captureList = new Dictionary<string, List<string>>();
-
-            if (m_PlayerNumber == ePlayerType.MainPlayer)
-            {
-                CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
-                if (m_CurrentCheckerPiece.IsKing)
-                {
-                    CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
-                }
-            }
-            else
-            {
-                CaptureUtils.CanCaptureUp(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
-                if (m_CurrentCheckerPiece.IsKing)
-                {
-                    CaptureUtils.CanCaptureDown(i_GameBoard, m_CurrentCheckerPiece, i_RivalPlayer.Pieces, ref captureList);
-                }
-            }
-
-            return captureList;
         }
 
         public bool HasAnotherTurn()

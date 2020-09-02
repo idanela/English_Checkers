@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "Validation\Validation.csproj", "{0B721956-3BB0-47FA-8AD2-54119E362480}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B721956-3BB0-47FA-8AD2-54119E362480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B721956-3BB0-47FA-8AD2-54119E362480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B721956-3BB0-47FA-8AD2-54119E362480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B721956-3BB0-47FA-8AD2-54119E362480}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

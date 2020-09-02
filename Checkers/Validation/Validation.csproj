@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EA737BA6-7A06-4C0C-9C53-935CAE5329BF}</ProjectGuid>
+    <ProjectGuid>{0B721956-3BB0-47FA-8AD2-54119E362480}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>UI</RootNamespace>
-    <AssemblyName>UI</AssemblyName>
+    <RootNamespace>Validation</RootNamespace>
+    <AssemblyName>Validation</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -39,21 +39,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UserIntterface.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\board\board.csproj">
-      <Project>{21f0f380-d8fa-42bd-9f71-91451aa0914e}</Project>
-      <Name>board</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CheckersPiece\CheckersPiece.csproj">
-      <Project>{45597830-ebc8-44ef-8a68-58fb21a76c63}</Project>
-      <Name>CheckersPiece</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Validation\Validation.csproj">
-      <Project>{0b721956-3bb0-47fa-8ad2-54119e362480}</Project>
-      <Name>Validation</Name>
-    </ProjectReference>
+    <Compile Include="Validate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

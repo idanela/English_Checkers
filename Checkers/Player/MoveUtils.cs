@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
 using CheckersBoard;
 using CheckerPiece;
 
@@ -134,8 +132,7 @@ namespace Player
 
 
         // Move Tools Methods:
-        public static void MoveRegularTool(User i_CurrentPlayer, ref Board io_GameBoard,
-                                           ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
+        public static void MoveRegularTool(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionTo)
         {
             ushort nextRowIndex = (ushort)(i_PositionTo[k_RowIndex] - 'a');
             ushort nextColIndex = (ushort)(i_PositionTo[k_ColIndex] - 'A');
@@ -154,8 +151,7 @@ namespace Player
             io_CurrentChecker.ChangePosition(nextRowIndex, nextColIndex);
         }
 
-        public static void MoveKingTool(User i_CurrentPlayer, ref Board io_GameBoard,
-                                        ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
+        public static void MoveKingTool(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionTo)
         {
             ushort nextRowIndex = (ushort)(i_PositionTo[k_RowIndex] - 'a');
             ushort nextColIndex = (ushort)(i_PositionTo[k_ColIndex] - 'A');
