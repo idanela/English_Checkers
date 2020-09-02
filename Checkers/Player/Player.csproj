@@ -53,6 +53,10 @@
       <Project>{45597830-ebc8-44ef-8a68-58fb21a76c63}</Project>
       <Name>CheckersPiece</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UI\UI.csproj">
+      <Project>{ea737ba6-7a06-4c0c-9c53-935cae5329bf}</Project>
+      <Name>UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

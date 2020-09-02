@@ -22,8 +22,7 @@ namespace Player
 
                     if (checkerPiece.IsKing)
                     {
-                        CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
-                        canCapture = true;
+                        canCapture = canCapture || CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
                     }
 
                 }
@@ -36,8 +35,7 @@ namespace Player
 
                     if (checkerPiece.IsKing)
                     {
-                        CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
-                        canCapture = true;
+                        canCapture = canCapture || CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
                     }
                 }
             }

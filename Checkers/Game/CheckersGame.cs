@@ -48,7 +48,7 @@ namespace Game
                 i_GameBoard.printBoard();
                 if (isFirstPlayerTurn)
                 {
-                    currentMove = UserIntterface.PlayerTurn(i_GameBoard, i_FirstPlayer);
+                    currentMove = UserIntterface.PlayerTurn(i_GameBoard, i_FirstPlayer.Name,CheckersPiece.ePieceKind.MainPlayerTool);
                     if (currentMove =="Q")
                     {
                         quitGame(i_FirstPlayer, i_SecondPlayer, ref isGameFinished); 
@@ -61,12 +61,11 @@ namespace Game
                         {
                             isFirstPlayerTurn = !isFirstPlayerTurn;
                         }
-
                     }
                 }
                 else
                 {
-                    currentMove = UserIntterface.PlayerTurn(i_GameBoard, i_SecondPlayer);
+                    currentMove = UserIntterface.PlayerTurn(i_GameBoard, i_SecondPlayer.Name, CheckersPiece.ePieceKind.SecondPlayerTool);
                     Validation.ParsePositions(currentMove, ref currentLocation, ref destinationPosition);
                     if (currentMove == "Q")
                     {

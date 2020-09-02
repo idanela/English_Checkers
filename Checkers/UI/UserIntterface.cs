@@ -1,7 +1,6 @@
 ﻿using System;
 using CheckersBoard;
-using Player;
-
+using CheckerPiece;
 namespace UI
 {
    public class UserIntterface
@@ -152,10 +151,10 @@ namespace UI
             Console.WriteLine(forfeitMessage);
         }
 
-        public static string  PlayerTurn( Board i_GameBoard, User i_Player)
+        public static string  PlayerTurn( Board i_GameBoard, string i_PlayerName,CheckersPiece.ePieceKind pieceKind)
         {
-            Console.Write(i_Player.Name+"'s turn");
-            if(i_Player.CheckerKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
+            Console.Write(i_PlayerName + "'s turn");
+            if(pieceKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
             {
                 Console.WriteLine("(O)");
             }

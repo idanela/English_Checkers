@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using CheckerPiece;
 using CheckersBoard;
-
+using UI;
 namespace Player
 {
     public struct User
@@ -297,7 +297,9 @@ namespace Player
                 ref io_RivalChecker))
             {
                 Console.WriteLine("Invalid move. player must capture.");
-                Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
+                string move = UserIntterface.GetValidMove(i_GameBoard);
+                Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
@@ -306,7 +308,9 @@ namespace Player
             while (!isValidMove(i_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref io_CurrentChecker))
             {
                 Console.WriteLine("Invalid move. player must move with to free positions.");
-                Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
+                string move = UserIntterface.GetValidMove(i_GameBoard);
+                Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
