@@ -7,10 +7,10 @@ namespace CheckerPiece
     {
         public enum ePieceKind
         {
-          MainPlayerTool= 'X',
-          SecondPlayerMainTool='O', 
-          MainPlayerKing = 'K',
-          SecondPlayerKing= 'U'
+          MainPlayerTool= 'O',
+          SecondPlayerTool='X', 
+          MainPlayerKing = 'U',
+          SecondPlayerKing= 'K'
         }
 
         // Members
@@ -77,8 +77,8 @@ namespace CheckerPiece
 
         public void GotToOtherSideOfBoard(ref Board i_CheckersBoard) // Checks if a checker piece need to become a king.
         {
-            if((this.PieceKind == ePieceKind.MainPlayerTool && m_RowIndex == 0) 
-              || (this.PieceKind == ePieceKind.SecondPlayerMainTool && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1))
+            if((this.PieceKind == ePieceKind.MainPlayerTool && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1)
+              || (this.PieceKind == ePieceKind.SecondPlayerTool && m_RowIndex == 0))
             {
                 this.becomeKing();
                 updateKingChecker(ref i_CheckersBoard);

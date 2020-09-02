@@ -15,18 +15,29 @@ namespace Player
             {
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
-                    canCapture = CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions))
+                    {
+                        canCapture = true;
+                    }
+
                     if (checkerPiece.IsKing)
                     {
                         CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                        canCapture = true;
                     }
+
                 }
                 else
                 {
-                    canCapture = CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                    if (CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions))
+                    {
+                        canCapture = true;
+                    }
+
                     if (checkerPiece.IsKing)
                     {
                         CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                        canCapture = true;
                     }
                 }
             }
@@ -34,10 +45,10 @@ namespace Player
             return canCapture;
         }
 
-        public static bool CanCaptureUp(Board i_GameBoard, CheckersPiece i_Current, CheckersPiece[] i_RivalCheckersPiece,
+        public static bool CanCaptureUp(Board i_GameBoard, CheckersPiece i_Current, List<CheckersPiece> i_RivalCheckersPiece,
                                         ref Dictionary<string, List<string>> io_CapturePositions)
         {
-            bool canCapture;
+            bool canCaptureLeft, canCaptureRight;
             ushort rowIndex, colIndex;
             // ushort newRowIndex, newColIndex;
             CheckersPiece rivalCheckerPieceUpRight, rivalCheckerPieceUpLeft;
@@ -46,7 +57,7 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex - 1);
             colIndex = (ushort)(i_Current.ColIndex + 1);
             rivalCheckerPieceUpRight = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCapture = TryInsertCapturePosition(
+            canCaptureRight = TryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex - 2), (ushort)(i_Current.ColIndex + 2),
                 rivalCheckerPieceUpRight, ref io_CapturePositions);
@@ -55,18 +66,18 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex - 1);
             colIndex = (ushort)(i_Current.ColIndex - 1);
             rivalCheckerPieceUpLeft = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCapture = TryInsertCapturePosition(
+            canCaptureLeft = TryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex - 2), (ushort)(i_Current.ColIndex - 2),
                 rivalCheckerPieceUpLeft, ref io_CapturePositions);
 
-            return canCapture;
+            return canCaptureRight || canCaptureLeft;
         }
 
-        public static bool CanCaptureDown(Board i_GameBoard, CheckersPiece i_Current, CheckersPiece[] i_RivalCheckersPiece,
+        public static bool CanCaptureDown(Board i_GameBoard, CheckersPiece i_Current, List<CheckersPiece> i_RivalCheckersPiece,
                                           ref Dictionary<string, List<string>> io_CapturePositions)
-        {
-            bool canCapture;
+        { 
+            bool canCaptureRight, canCaptureLeft;
             ushort rowIndex, colIndex;
             // ushort newRowIndex, newColIndex;
             CheckersPiece rivalCheckerPieceDownRight, rivalCheckerPieceDownLeft;
@@ -75,7 +86,7 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex + 1);
             colIndex = (ushort)(i_Current.ColIndex + 1);
             rivalCheckerPieceDownRight = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCapture = TryInsertCapturePosition(
+            canCaptureRight = TryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex + 2), (ushort)(i_Current.ColIndex + 2),
                 rivalCheckerPieceDownRight, ref io_CapturePositions);
@@ -84,12 +95,12 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex + 1);
             colIndex = (ushort)(i_Current.ColIndex - 1);
             rivalCheckerPieceDownLeft = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCapture = TryInsertCapturePosition(
+            canCaptureLeft = TryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex + 2), (ushort)(i_Current.ColIndex - 2),
                 rivalCheckerPieceDownLeft, ref io_CapturePositions);
 
-            return canCapture;
+            return canCaptureLeft || canCaptureRight;
         }
 
         private static bool TryInsertCapturePosition(
@@ -115,7 +126,7 @@ namespace Player
         }
 
 
-        public static CheckersPiece FindCheckerPiece(ushort i_RowIndex, ushort i_ColIndex, CheckersPiece[] i_RivalChckersPiece)
+        public static CheckersPiece FindCheckerPiece(ushort i_RowIndex, ushort i_ColIndex, List<CheckersPiece> i_RivalChckersPiece)
         {
             CheckersPiece currentCheckerPiece = null;
 
@@ -142,14 +153,14 @@ namespace Player
             ushort nextColIndex;
             ushort nextRowIndex = i_GameBoard.GetIndexInBoard(ref io_PositionTo, out nextColIndex);
 
-            // Update current checker position.
-            io_CurrentCheckerPiece.ChangePosition(nextRowIndex, nextColIndex);
-            // Update rival's checker status (dead).
-            io_RivalCheckerPiece.Die();
             // Update board after eating, and move the current checker to his next place.
             i_GameBoard.UpdateAfterEating(io_CurrentCheckerPiece.RowIndex, io_CurrentCheckerPiece.ColIndex,
                 nextRowIndex, nextColIndex,
                 io_RivalCheckerPiece.RowIndex, io_RivalCheckerPiece.ColIndex);
+            // Update current checker position.
+            io_CurrentCheckerPiece.ChangePosition(nextRowIndex, nextColIndex);
+            // Update rival's checker status (dead).
+            io_RivalCheckerPiece.Die();
         }
     }
 }

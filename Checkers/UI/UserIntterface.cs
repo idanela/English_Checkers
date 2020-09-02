@@ -146,17 +146,24 @@ namespace UI
             return isValidIndexesMove;
         }
 
-
-
         public static void PrintForfeitMessage(string i_playerName, string i_RivalPlayerName)
         {
             string forfeitMessage = string.Format("{0} has quit, {1} is the winner", i_playerName,i_RivalPlayerName);
             Console.WriteLine(forfeitMessage);
         }
 
-        public static string  PlayerTurn( Board i_GameBoard, User i_player)
+        public static string  PlayerTurn( Board i_GameBoard, User i_Player)
         {
-            Console.WriteLine(i_player.Name+"'s turn");
+            Console.Write(i_Player.Name+"'s turn");
+            if(i_Player.CheckerKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
+            {
+                Console.WriteLine("(O)");
+            }
+            else
+            {
+                Console.WriteLine("(X)");
+
+            }
             string currentMove = UserIntterface.GetValidMove(i_GameBoard);
 
             return currentMove;
