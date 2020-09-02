@@ -42,7 +42,7 @@ namespace Player
             return canCapture;
         }
 
-        public static bool CanCaptureUp(Board i_GameBoard, CheckersPiece i_Current, CheckersPiece[] i_RivalCheckersPiece,
+        public static bool CanCaptureUp(Board i_GameBoard, CheckersPiece i_Current, List<CheckersPiece> i_RivalCheckersPiece,
                                         ref Dictionary<string, List<string>> io_CapturePositions)
         {
             bool canCapture;
@@ -71,7 +71,7 @@ namespace Player
             return canCapture;
         }
 
-        public static bool CanCaptureDown(Board i_GameBoard, CheckersPiece i_Current, CheckersPiece[] i_RivalCheckersPiece,
+        public static bool CanCaptureDown(Board i_GameBoard, CheckersPiece i_Current, List<CheckersPiece> i_RivalCheckersPiece,
                                           ref Dictionary<string, List<string>> io_CapturePositions)
         {
             bool canCapture;
@@ -123,7 +123,7 @@ namespace Player
         }
 
 
-        public static CheckersPiece FindCheckerPiece(ushort i_RowIndex, ushort i_ColIndex, CheckersPiece[] i_RivalChckersPiece)
+        public static CheckersPiece FindCheckerPiece(ushort i_RowIndex, ushort i_ColIndex, List<CheckersPiece> i_RivalChckersPiece)
         {
             CheckersPiece currentCheckerPiece = null;
 
@@ -150,14 +150,14 @@ namespace Player
             ushort nextColIndex;
             ushort nextRowIndex = i_GameBoard.GetIndexInBoard(ref io_PositionTo, out nextColIndex);
 
-            // Update current checker position.
-            io_CurrentCheckerPiece.ChangePosition(nextRowIndex, nextColIndex);
-            // Update rival's checker status (dead).
-            io_RivalCheckerPiece.Die();
             // Update board after eating, and move the current checker to his next place.
             i_GameBoard.UpdateAfterEating(io_CurrentCheckerPiece.RowIndex, io_CurrentCheckerPiece.ColIndex,
                 nextRowIndex, nextColIndex,
                 io_RivalCheckerPiece.RowIndex, io_RivalCheckerPiece.ColIndex);
+            // Update current checker position.
+            io_CurrentCheckerPiece.ChangePosition(nextRowIndex, nextColIndex);
+            // Update rival's checker status (dead).
+            io_RivalCheckerPiece.Die();
         }
     }
 }
