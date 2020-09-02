@@ -1,12 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using CheckersBoard;
 using CheckerPiece;
 
 namespace Player
 {
-    struct MoveUtils
+    public struct MoveUtils
     {
         // Constants:
         private const short k_RowIndex = 1;
@@ -23,18 +23,27 @@ namespace Player
 
                 if (i_CurrentPlayer.PlayerNumber == User.ePlayerType.MainPlayer)
                 {
-                    getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    if (checkerPiece.IsKing)
+                    {
+                        getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    }
                 }
                 else
                 {
-                    getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    getUpCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    if (checkerPiece.IsKing)
+                    {
+                        getDownCellsPosition(ref optionsToMove, i_GameBoard, checkerPiece);
+                    }
                 }
             }
 
             return optionsToMove;
         }
 
-        private static void getUpCellsPosition(ref Dictionary<string, List<string>> io_OptionsMove, Board i_GameBoard, CheckersPiece i_CurrentCheckerPiece)
+        private static void getUpCellsPosition(ref Dictionary<string, List<string>> io_OptionsMove, Board i_GameBoard,
+                                               CheckersPiece i_CurrentCheckerPiece)
         {
             ushort newRowIndex = (ushort)(i_CurrentCheckerPiece.RowIndex - 1);
             ushort newColRightIndex = (ushort)(i_CurrentCheckerPiece.ColIndex + 1);
@@ -79,7 +88,7 @@ namespace Player
 
             if (isAvailableCellDownRightWay(i_GameBoard, i_CurrentCheckerPiece))
             {
-                addToDict(ref io_OptionsMove, i_CurrentCheckerPiece , positionRightStr);
+                addToDict(ref io_OptionsMove, i_CurrentCheckerPiece, positionRightStr);
             }
 
             if (isAvailableCellDownLeftWay(i_GameBoard, i_CurrentCheckerPiece))
@@ -104,56 +113,65 @@ namespace Player
             return i_GameBoard.IsCheckerAvailable(newRowIndex, newColLeftIndex);
         }
 
-        public static void addToDict(ref Dictionary<string, List<string>> i_Options, CheckersPiece i_CurrentChecker, string i_OptionPosition)
+        public static void addToDict(ref Dictionary<string, List<string>> io_Options, CheckersPiece i_CurrentChecker, string i_OptionPosition)
         {
             string currentPosition = GetStringIndexes(i_CurrentChecker.RowIndex, i_CurrentChecker.ColIndex);
-            i_Options[currentPosition].Add(i_OptionPosition);
+            if (!io_Options.ContainsKey(currentPosition))
+            {
+                io_Options.Add(currentPosition, new List<string>());
+            }
+            io_Options[currentPosition].Add(i_OptionPosition);
         }
 
         public static string GetStringIndexes(ushort i_RowIndex, ushort i_ColIndex)
         {
-            char row = (char)(i_RowIndex + 'a');
-            char col = (char)(i_ColIndex + 'A');
+            char[] indexes = new char[2];
+            indexes[k_RowIndex] = (char)(i_RowIndex + 'a');
+            indexes[k_ColIndex] = (char)(i_ColIndex + 'A');
 
-            return new string(row, col);
+            return new string(indexes);
         }
 
 
         // Move Tools Methods:
-        public static void MoveRegularTool(User i_CurrentPlayer, ref Board i_GameBoard,
-                                           ref CheckersPiece i_CurrentChecker, string i_PositionFrom, string i_PositionTo)
-        {
-            ushort nextRowIndex = (ushort) (i_PositionTo[k_RowIndex] - 'a');
-            ushort nextColIndex = (ushort) (i_PositionTo[k_ColIndex] - 'A');
-            
-            // If there is not(!) a rival checker piece in the way.
-            // Check valid move - include: inborder, valid input, is empty cell.
-            Validation.CheckValidMoveRegularTool(i_GameBoard, i_CurrentPlayer, i_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
-            
-            // Update board - new tool position.
-            i_GameBoard.UpdateBoardAccordingToPlayersMove(
-                i_CurrentChecker.RowIndex, 
-                i_CurrentChecker.ColIndex,
-                nextRowIndex,
-                nextColIndex);
-        }
-
-        public static void MoveKingTool(User i_CurrentPlayer, ref Board i_GameBoard,
-                                        ref CheckersPiece i_CurrentChecker, string i_PositionFrom, string i_PositionTo)
+        public static void MoveRegularTool(User i_CurrentPlayer, ref Board io_GameBoard,
+                                           ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
         {
             ushort nextRowIndex = (ushort)(i_PositionTo[k_RowIndex] - 'a');
             ushort nextColIndex = (ushort)(i_PositionTo[k_ColIndex] - 'A');
 
             // If there is not(!) a rival checker piece in the way.
             // Check valid move - include: inborder, valid input, is empty cell.
-            Validation.CheckValidMoveKingTool(i_GameBoard, i_CurrentPlayer, i_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
+            // Validation.CheckValidMoveRegularTool(io_GameBoard, i_CurrentPlayer, io_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
 
             // Update board - new tool position.
-            i_GameBoard.UpdateBoardAccordingToPlayersMove(
-                i_CurrentChecker.RowIndex,
-                i_CurrentChecker.ColIndex,
+            io_GameBoard.UpdateBoardAccordingToPlayersMove(
+                io_CurrentChecker.RowIndex,
+                io_CurrentChecker.ColIndex,
                 nextRowIndex,
                 nextColIndex);
+
+            io_CurrentChecker.ChangePosition(nextRowIndex, nextColIndex);
+        }
+
+        public static void MoveKingTool(User i_CurrentPlayer, ref Board io_GameBoard,
+                                        ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
+        {
+            ushort nextRowIndex = (ushort)(i_PositionTo[k_RowIndex] - 'a');
+            ushort nextColIndex = (ushort)(i_PositionTo[k_ColIndex] - 'A');
+
+            // If there is not(!) a rival checker piece in the way.
+            // Check valid move - include: inborder, valid input, is empty cell.
+            // Validation.CheckValidMoveKingTool(io_GameBoard, i_CurrentPlayer, io_CurrentChecker, ref i_PositionFrom, ref i_PositionTo);
+
+            // Update board - new tool position.
+            io_GameBoard.UpdateBoardAccordingToPlayersMove(
+                io_CurrentChecker.RowIndex,
+                io_CurrentChecker.ColIndex,
+                nextRowIndex,
+                nextColIndex);
+
+            io_CurrentChecker.ChangePosition(nextRowIndex, nextColIndex);
         }
     }
 }
