@@ -327,8 +327,9 @@ namespace Player
 
                         colIndex += (ushort)(io_PositionTo[k_ColIndex] - io_PositionFrom[k_ColIndex]);
                         rowIndex += (ushort)(io_PositionTo[k_RowIndex] - io_PositionFrom[k_RowIndex]);
-                        findRivalPosition(ref rowIndex, ref colIndex, io_PositionTo[k_ColIndex] < io_PositionFrom[k_ColIndex]);
-                        io_RivalChecker = CaptureUtils.FindCheckerPiece(rowIndex, colIndex, i_RivalPieces);
+                        getRivalPosition(ref rowIndex, ref colIndex, io_PositionTo[k_RowIndex] < io_PositionFrom[k_RowIndex],
+                            io_PositionTo[k_ColIndex] < io_PositionFrom[k_ColIndex]);
+                        io_RivalChecker = CaptureUtils.FindCheckerPiece((ushort)rowIndex, (ushort)colIndex, i_RivalPieces);
 
                         isValid = true;
                         break;
@@ -339,9 +340,15 @@ namespace Player
             return isValid;
         }
 
-        private void findRivalPosition(ref ushort io_RowIndex, ref ushort io_ColIndex, bool i_Left)
+        private void getRivalPosition(ref ushort io_RowIndex, ref ushort io_ColIndex, bool i_Up, bool i_Left)
         {
-            if (PlayerNumber == ePlayerType.MainPlayer)
+            changeRowIndex(ref io_RowIndex, i_Up);
+            changeColIndex(ref io_ColIndex, i_Left);
+        }
+
+        private void changeRowIndex(ref ushort io_RowIndex, bool i_Up)
+        { 
+            if (!i_Up)
             {
                 io_RowIndex--;
             }
@@ -349,7 +356,10 @@ namespace Player
             {
                 io_RowIndex++;
             }
+        }
 
+        private void changeColIndex(ref ushort io_ColIndex, bool i_Left)
+        {
             if (i_Left)
             {
                 io_ColIndex++;
@@ -358,7 +368,6 @@ namespace Player
             {
                 io_ColIndex--;
             }
-
         }
 
         private bool isValidMove(Board i_GameBoard, ref string i_PositionFrom, ref string i_PositionTo, ref CheckersPiece io_CurrentChecker)
