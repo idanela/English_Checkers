@@ -14,6 +14,7 @@ namespace Game
             string firstPlayerName = UserIntterface.GetValidUserName();
             User firstPlayer = new User(firstPlayerName, User.ePlayerType.MainPlayer,isComputer);
             ushort boardSize = UserIntterface.GetValidBoardSize();
+            firstPlayer.InitializeCheckersArray(boardSize);
             Board gameBoard = new Board(boardSize);
             char choice = UserIntterface.GetRival();
             string rivalName = string.Empty;
@@ -29,6 +30,7 @@ namespace Game
             }
 
             User rivalPlayer = new User(rivalName, User.ePlayerType.RivalPlayer, isComputer);
+            rivalPlayer.InitializeCheckersArray(boardSize);
             playGame(firstPlayer, rivalPlayer, gameBoard);
         }
 

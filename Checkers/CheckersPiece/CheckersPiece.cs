@@ -19,7 +19,6 @@ namespace CheckerPiece
         private bool m_IsAlive;
         private ushort m_RowIndex;
         private ushort m_ColIndex;
-        private bool m_CanEatAgain;
 
         public CheckersPiece(ePieceKind i_PieceKind, ushort i_RowIndex, ushort i_ColIndex) // Constructor.
         {
@@ -28,7 +27,6 @@ namespace CheckerPiece
             m_IsAlive = true;
             m_RowIndex = i_RowIndex;
             m_ColIndex = i_ColIndex;
-            m_CanEatAgain = false;
         }
 
         // Prpoerties
@@ -49,7 +47,7 @@ namespace CheckerPiece
         {
             get
             {
-                return IsKing;
+                return m_IsKing;
             }
         }
 
@@ -75,24 +73,6 @@ namespace CheckerPiece
             {
                 return m_RowIndex;
             }
-        }
-
-        public bool CanEatAgain
-        {
-            get
-            {
-                return CanEatAgain;
-            }
-        }
-
-
-        public void MarkAsCanEatAgain()
-        {
-            m_CanEatAgain = true;
-        }
-        public void UnMarkAsCanEatAgain()
-        {
-            m_CanEatAgain = false;
         }
 
         public void GotToOtherSideOfBoard(ref Board i_CheckersBoard) // Checks if a checker piece need to become a king.
