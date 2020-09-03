@@ -9,7 +9,8 @@ namespace Player
         public static bool CanUserCapture(Board i_GameBoard, User i_CurrentPlayer, User i_RivalPlayer,
                                           ref Dictionary<string, List<string>> io_CapturePositions)
         {
-            bool canCapture = false;
+            bool canCaptureUp = false;
+            bool canCaptureDown = false;
 
             foreach (CheckersPiece checkerPiece in i_CurrentPlayer.Pieces)
             {
@@ -17,12 +18,12 @@ namespace Player
                 {
                     if (CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions))
                     {
-                        canCapture = true;
+                        canCaptureDown = true;
                     }
 
                     if (checkerPiece.IsKing)
                     {
-                        canCapture = canCapture || CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                        canCaptureUp = CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
                     }
 
                 }
@@ -30,17 +31,17 @@ namespace Player
                 {
                     if (CanCaptureUp(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions))
                     {
-                        canCapture = true;
+                        canCaptureUp = true;
                     }
 
                     if (checkerPiece.IsKing)
                     {
-                        canCapture = canCapture || CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
+                        canCaptureDown =  CanCaptureDown(i_GameBoard, checkerPiece, i_RivalPlayer.Pieces, ref io_CapturePositions);
                     }
                 }
             }
 
-            return canCapture;
+            return canCaptureUp || canCaptureDown;
         }
 
         public static bool CanCaptureUp(Board i_GameBoard, CheckersPiece i_Current, List<CheckersPiece> i_RivalCheckersPiece,
@@ -157,8 +158,7 @@ namespace Player
                 io_RivalCheckerPiece.RowIndex, io_RivalCheckerPiece.ColIndex);
             // Update current checker position.
             io_CurrentCheckerPiece.ChangePosition(nextRowIndex, nextColIndex);
-            // Update rival's checker status (dead).
-            io_RivalCheckerPiece.Die();
+           
         }
     }
 }

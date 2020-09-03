@@ -25,15 +25,15 @@ namespace UI
             return playerName;
         }
 
-            private static bool IsValidUserName(string nameOfPlayer)
+            private static bool IsValidUserName(string i_NameOfPlayer)
             {
-                bool isValidName = nameOfPlayer.Length <= 20 && nameOfPlayer.Length > 0;
+                bool isValidName = i_NameOfPlayer.Length <= 20 && i_NameOfPlayer.Length > 0;
 
                 if (isValidName)
                 {
-                    for (int i = 0; i < nameOfPlayer.Length; i++)
+                    for (int i = 0; i < i_NameOfPlayer.Length; i++)
                     {
-                        isValidName = isValidName && char.IsLetter(nameOfPlayer[i]);
+                        isValidName = isValidName && char.IsLetter(i_NameOfPlayer[i]);
                     }
                 }
 
@@ -50,7 +50,7 @@ namespace UI
         {
             ushort sizeOfBoard;
 
-            while (!ushort.TryParse(Console.ReadLine(), out sizeOfBoard) || !CheckersBoard.Board.isValidBoardSize(sizeOfBoard))
+            while (!ushort.TryParse(Console.ReadLine(), out sizeOfBoard) || !CheckersBoard.Board.IsValidBoardSize(sizeOfBoard))
             {
                 Console.WriteLine("Invalid input please insert size again.");
             }
@@ -113,7 +113,7 @@ namespace UI
             Console.WriteLine(forfeitMessage);
         }
 
-        public static string PlayerTurn(ushort i_BoardSize, string i_PlayerName, CheckersPiece.ePieceKind pieceKind, ref bool i_HasQuit)
+        public static string GetPlayerTurn(ushort i_BoardSize, string i_PlayerName, CheckersPiece.ePieceKind pieceKind, ref bool i_HasQuit)
         {
             Console.Write(i_PlayerName + "'s turn");
             if (pieceKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
@@ -130,17 +130,6 @@ namespace UI
 
             i_HasQuit = currentMove == "Q";
             return currentMove;
-        }
-
-        public static void UserTurnConversation(string i_Name, ref string io_PositionFrom, ref string io_PositionTo)
-        {
-            string move = null;
-
-            // Pass position from parameter, and change msg.
-            Console.WriteLine("Please enter where you want to move.");
-            Console.Write(i_Name + "'s turn: ");
-            move = Console.ReadLine();
-            //Validate.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
         }
 
         public static void PrintErrorMessage(String i_ErrorMsg)
@@ -164,7 +153,7 @@ namespace UI
                 }
                 else
                 {
-                    Console.WriteLine(i_PlayersName);
+                    Console.WriteLine(i_RivalsName);
                 }   
             }
             

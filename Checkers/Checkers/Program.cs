@@ -7,7 +7,7 @@ namespace Checkers
     {
         public static void Main()
         {
-            Game.CheckersGame.runGame();
+            Game.CheckersGame.RunGame();
         }
     }
 }

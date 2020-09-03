@@ -16,7 +16,6 @@ namespace CheckerPiece
         // Members
         private bool m_IsKing;
         private ePieceKind m_PieceKind;
-        private bool m_IsAlive;
         private ushort m_RowIndex;
         private ushort m_ColIndex;
 
@@ -24,7 +23,6 @@ namespace CheckerPiece
         {
             m_IsKing = false;
             m_PieceKind = i_PieceKind;
-            m_IsAlive = true;
             m_RowIndex = i_RowIndex;
             m_ColIndex = i_ColIndex;
         }
@@ -48,14 +46,6 @@ namespace CheckerPiece
             get
             {
                 return m_IsKing;
-            }
-        }
-
-        public bool IsAlive
-        {
-            get
-            {
-                return m_IsAlive;
             }
         }
 
@@ -102,11 +92,6 @@ namespace CheckerPiece
         private void updateKingChecker(ref Board i_CheckersBoard)
         {
             i_CheckersBoard.CheckersBoard[this.RowIndex, this.ColIndex] = (char)this.PieceKind;
-        }
-
-        public void Die() // "Kill" a checker piece. 
-        {
-            m_IsAlive = false;
         }
 
         public void ChangePosition(ushort i_NewRowIndex, ushort i_NewColIndex) // Changes a piece location.

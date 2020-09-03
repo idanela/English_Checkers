@@ -12,31 +12,29 @@ namespace Validation
             return i_MoveToPreform == "Q" || isLegalMove(i_MoveToPreform, i_BoardSize);
         }
 
-        public static bool isLegalMove(string i_moveToPreform, ushort i_BoardSize)
+        private static bool isLegalMove(string i_MoveToPreform, ushort i_BoardSize)
         {
-            return (isLegalMovePattern(i_moveToPreform) && IsValidBoardMove(i_moveToPreform, i_BoardSize));
+            return (isLegalMovePattern(i_MoveToPreform) && isValidBoardMove(i_MoveToPreform, i_BoardSize));
         }
 
-        public static bool isLegalMovePattern(string i_moveToPreform)
+        private static bool isLegalMovePattern(string i_MoveToPreform)
         {
-            return i_moveToPreform.Length == 5 &&
-            char.IsUpper(i_moveToPreform[0]) &&
-            char.IsLower(i_moveToPreform[1]) &&
-            i_moveToPreform[2] == '>' &&
-            char.IsUpper(i_moveToPreform[3]) &&
-            char.IsLower(i_moveToPreform[4]);
+            return i_MoveToPreform.Length == 5 &&
+            char.IsUpper(i_MoveToPreform[0]) &&
+            char.IsLower(i_MoveToPreform[1]) &&
+            i_MoveToPreform[2] == '>' &&
+            char.IsUpper(i_MoveToPreform[3]) &&
+            char.IsLower(i_MoveToPreform[4]);
         }
 
-        public static bool IsValidBoardMove(string i_moveToPreform, ushort i_BoardSize)
+        private static bool isValidBoardMove(string i_MoveToPreform, ushort i_BoardSize)
         {
             string location = string.Empty;
             string destination = string.Empty;
-            Validate.ParsePositions(i_moveToPreform, ref location, ref destination);
+            ParsePositions(i_MoveToPreform, ref location, ref destination);
 
-            return checkIndexes(i_BoardSize, location, destination);
+            return checkIndexesBounderies(i_BoardSize, location, destination);
         }
-
-
 
         public static void ParsePositions(string i_StrInput, ref string io_PositionFrom, ref string io_PositionTo)
         {
@@ -44,7 +42,7 @@ namespace Validation
             io_PositionFrom = i_StrInput.Substring(k_StartPositionTo, k_SubStringLength);
         }
 
-        public static bool checkIndexes(ushort i_BoardSize, string i_Location, string i_Destination)
+        private static bool checkIndexesBounderies(ushort i_BoardSize, string i_Location, string i_Destination)
         {
             ushort colIndex = (ushort)(i_Location[0] - 'A');
             ushort rowIndex = (ushort)(i_Location[1] - 'a');

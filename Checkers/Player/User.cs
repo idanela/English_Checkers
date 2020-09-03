@@ -244,12 +244,14 @@ namespace Player
                     {
                         m_CurrentCheckerPiece = null;
                     }
-                } 
+                }
+
+                    isGameOver = i_RivalPlayer.Pieces.Count == 0;    
             }
             else
             {
                 // If the player still have moves to do.
-                if (Moves == null || m_CheckersPiece.Count == 0)
+                if (Moves == null ||m_CheckersPiece.Count == 0)
                 {
                     isGameOver = true;
                 }
@@ -347,7 +349,7 @@ namespace Player
                 ref io_RivalChecker))
             {
                 UserIntterface.PrintErrorMessage("Invalid move. player must capture.");
-                string move = UserIntterface.PlayerTurn(i_GameBoard.SizeOfBoard, this.Name, this.CheckerKind, ref this.m_hasQuit);
+                string move = UserIntterface.GetPlayerTurn(i_GameBoard.SizeOfBoard, this.Name, this.CheckerKind, ref this.m_hasQuit);
                 if(move == "Q")
                 {
                     this.HasQuit = true;
@@ -449,7 +451,7 @@ namespace Player
             while (!isValidMove(i_GameBoard, io_PositionFrom, io_PositionTo, ref io_CurrentChecker))
             {
                 UserIntterface.PrintErrorMessage("Invalid move. player must move diagonal and to a free position.");
-                string move = UserIntterface.PlayerTurn(i_GameBoard.SizeOfBoard, this.Name, this.CheckerKind, ref m_hasQuit);
+                string move = UserIntterface.GetPlayerTurn(i_GameBoard.SizeOfBoard, this.Name, this.CheckerKind, ref m_hasQuit);
                 if(move == "Q")
                 {
                     this.HasQuit = true;

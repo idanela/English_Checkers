@@ -5,13 +5,6 @@ namespace CheckersBoard
 {
     public class Board
     {
-        public enum eBoardSize
-        {
-            small = 6,
-            medium = 8, 
-            large = 10
-        }
-
         // Constants
         private const char k_BlankChecker = ' ';
         private const int K_smallestBoardSize = 6;
@@ -20,38 +13,13 @@ namespace CheckersBoard
         private readonly char[,] m_CheckersBoard;
         private readonly ushort m_SizeOfBoard;
 
-        private static string createLineString(ushort i_SizeOfBoard) // Creates the line that seperates between two checker's rows.
-        {
-            StringBuilder EqualsLine = new StringBuilder(" ========================");
-
-            // Adding equal signs According to the size of the board.
-            for (int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
-            {
-                EqualsLine.Append("====");
-            }
-
-            return EqualsLine.ToString();
-        }
-
-        private static void correctTopindex(ref StringBuilder checkerBoard, ushort i_SizeOfBoard) // prints top indexes of the board 
-        {
-            char letterIndex = 'G';
-
-            // Adding Top Indexes According to the size of the board.
-            for (int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
-            {
-                checkerBoard.AppendFormat("{0}   ", letterIndex);
-                letterIndex++;
-            }
-        }
-
         public Board(ushort i_SizeOfBoard) // Constructor.
-        {   
+        {
             m_CheckersBoard = new char[i_SizeOfBoard, i_SizeOfBoard];
             m_SizeOfBoard = i_SizeOfBoard;
             this.InitializeBoard();
         }
-
+        
         // Properties
         public ushort SizeOfBoard
         {
@@ -100,31 +68,33 @@ namespace CheckersBoard
             }
         }
 
-        private void placePlayerAccordingToToRowAndCol(ushort i_Row, ushort i_Col) // Place Checker pieces According to row and col index
+        private void placePlayerAccordingToToRowAndCol(ushort i_RowIndex, ushort i_ColIndex) // Place Checker pieces According to row and col index
         {
-            if (i_Row % 2 == 0)
+            if (i_RowIndex % 2 == 0)
             {
-                if (i_Col % 2 != 0)
+                if (i_ColIndex % 2 != 0)
                 {
-                    m_CheckersBoard[i_Row, i_Col] = 'O';
+                    m_CheckersBoard[i_RowIndex, i_ColIndex] = 'O';
                 }
                 else
                 {
-                    m_CheckersBoard[m_SizeOfBoard - 1 - i_Row, i_Col] = 'X';
+                    m_CheckersBoard[m_SizeOfBoard - 1 - i_RowIndex, i_ColIndex] = 'X';
                 }
             }
             else
             {
-                if (i_Col % 2 == 0)
+                if (i_ColIndex % 2 == 0)
                 {
-                    m_CheckersBoard[i_Row, i_Col] = 'O';
+                    m_CheckersBoard[i_RowIndex, i_ColIndex] = 'O';
                 }
                 else
                 {
-                    m_CheckersBoard[m_SizeOfBoard - 1 - i_Row, i_Col] = 'X';
+                    m_CheckersBoard[m_SizeOfBoard - 1 - i_RowIndex, i_ColIndex] = 'X';
                 }
             }
         }
+
+
 
         public void printBoard() // Prints game Board.
         {
@@ -138,6 +108,32 @@ namespace CheckersBoard
 
             Console.WriteLine(CheckersBoard);
         }
+
+        private static void correctTopindex(ref StringBuilder io_CheckerBoard, ushort i_SizeOfBoard) // prints top indexes of the board 
+        {
+            char letterIndex = 'G';
+
+            // Adding Top Indexes According to the size of the board.
+            for (int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
+            {
+                io_CheckerBoard.AppendFormat("{0}   ", letterIndex);
+                letterIndex++;
+            }
+        }
+
+        private static string createLineString(ushort i_SizeOfBoard) // Creates the line that seperates between two checker's rows.
+        {
+            StringBuilder equalLine = new StringBuilder(" ========================");
+
+            // Adding equal signs According to the size of the board.
+            for (int i = K_smallestBoardSize; i < i_SizeOfBoard; i++)
+            {
+                equalLine.Append("====");
+            }
+
+            return equalLine.ToString();
+        }
+
 
         private void addAllCheckersToBoard(ref StringBuilder CheckersBoard, ref string lineString) // Add lines and checker pieces to checker Board.
         {
@@ -184,24 +180,22 @@ leftIndex);
         }
 
         // Clears a checker of a checker piece that was eaten.
-        public void DeleteCheckerPieceFromBoard(int i_Row, int i_Col)
+        private void deleteCheckerPieceFromBoard(int i_RowIndex, int i_ColIndex)
         {
-            m_CheckersBoard[i_Row, i_Col] = k_BlankChecker;
+            m_CheckersBoard[i_RowIndex, i_ColIndex] = k_BlankChecker;
         }
 
         // Update the board after a checker piece eat another.
         public void UpdateAfterEating(ushort i_row, ushort i_Col, ushort i_newRow, ushort i_NewCol, ushort i_RowTokill, ushort i_ColTokill)
         {
             UpdateBoardAccordingToPlayersMove(i_row, i_Col, i_newRow, i_NewCol);
-            DeleteCheckerPieceFromBoard(i_RowTokill, i_ColTokill);
+            deleteCheckerPieceFromBoard(i_RowTokill, i_ColTokill);
         }
         
-        public static bool isValidBoardSize( ushort i_SizeOfBoard)
+        public static bool IsValidBoardSize( ushort i_SizeOfBoard)
         {
             return i_SizeOfBoard == 6 || i_SizeOfBoard == 8 || i_SizeOfBoard == 10;
         }
-
         
-
     }
 }
