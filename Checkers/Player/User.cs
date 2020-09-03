@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckerPiece;
 using CheckersBoard;
 using UI;
+using Validation;
 
 namespace Player
 {
@@ -21,7 +22,7 @@ namespace Player
         private readonly ePlayerType m_PlayerNumber;
         private Dictionary<string, List<string>> m_Moves;
         private readonly bool m_IsComputer;
-
+        private bool m_hasQuit;
         // Enums:
         public enum ePlayerType
         {
@@ -42,6 +43,7 @@ namespace Player
             m_Moves = null;
             m_CurrentCheckerPiece = null;
             m_IsComputer = i_IsComputer;
+            m_hasQuit = false;
         }
 
         // Properties:
@@ -104,6 +106,19 @@ namespace Player
                 return m_IsComputer;
             }
         }
+
+        public bool HasQuit
+        {
+            get
+            {
+                return m_hasQuit;
+            }
+            set
+            {
+                m_hasQuit = value;
+            }
+        }
+
 
 
         // Methods:
@@ -189,19 +204,21 @@ namespace Player
             }
         }
 
-        public void GetAndCalculateScore()
+        public ushort GetAndCalculateScore()
         {
+            ushort playerScore = 0;
             foreach (CheckersPiece checkersPiece in Pieces)
             {
                 if (checkersPiece.IsKing)
                 {
-                    m_Score += 4;
+                    playerScore += 4;
                 }
                 else
                 {
-                    m_Score++;
+                    playerScore++;
                 }
             }
+            return playerScore;
         }
 
         public void printScore()
@@ -221,10 +238,13 @@ namespace Player
             if (GetMovesAndUpdate(io_GameBoard, i_RivalPlayer))
             {
                 playCapture(io_GameBoard, ref i_PositionFrom, ref i_PositionTo, i_RivalPlayer.Pieces);
-                if (createCaptureMoveList(io_GameBoard, i_RivalPlayer).Count == 0)
+                if(!this.HasQuit)
                 {
-                    m_CurrentCheckerPiece = null;
-                }
+                    if (createCaptureMoveList(io_GameBoard, i_RivalPlayer).Count == 0)
+                    {
+                        m_CurrentCheckerPiece = null;
+                    }
+                } 
             }
             else
             {
@@ -239,9 +259,8 @@ namespace Player
                 }
             }
 
-            return isGameOver;
+            return isGameOver || this.HasQuit;
         }
-
 
         public bool GetMovesAndUpdate(Board i_GameBoard, User i_RivalPlayer)
         {
@@ -306,12 +325,19 @@ namespace Player
                 playerMustCapture(io_GameBoard, ref io_PositionFrom, ref io_PositionTo,
                     ref checkerPieceToMove, i_RivalPlayerPieces, ref rivalCheckerPiece);
             }
-
-            // Checks if there's an optional capture, and updating the data structure.
-            MakeCapture(io_GameBoard, ref checkerPieceToMove, ref io_PositionTo, ref rivalCheckerPiece);
-            checkerPieceToMove.GotToOtherSideOfBoard(ref io_GameBoard);
-            // Remove checker piece from rival's soldiers.
-            i_RivalPlayerPieces.Remove(rivalCheckerPiece);
+            else
+            {
+                computerMustCapture(io_GameBoard, ref io_PositionFrom, ref io_PositionTo,
+                    ref checkerPieceToMove, i_RivalPlayerPieces, ref rivalCheckerPiece);
+            }
+            if(!this.HasQuit)
+            {
+                // Checks if there's an optional capture, and updating the data structure.
+                MakeCapture(io_GameBoard, ref checkerPieceToMove, ref io_PositionTo, ref rivalCheckerPiece);
+                // Remove checker piece from rival's soldiers.
+                checkerPieceToMove.GotToOtherSideOfBoard(ref io_GameBoard);
+                i_RivalPlayerPieces.Remove(rivalCheckerPiece);
+            }
         }
 
         private void playerMustCapture(Board i_GameBoard, ref string io_PositionFrom, ref string io_PositionTo,
@@ -321,16 +347,13 @@ namespace Player
                 ref io_RivalChecker))
             {
                 UserIntterface.PrintErrorMessage("Invalid move. player must capture.");
-                string move = UserIntterface.GetValidMove(i_GameBoard);
-                if (move != "Q")
+                string move = UserIntterface.PlayerTurn(i_GameBoard.SizeOfBoard, this.Name, this.CheckerKind, ref this.m_hasQuit);
+                if(move == "Q")
                 {
-                    Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                    this.HasQuit = true;
+                    break;
                 }
-                else
-                {
-                    
-                }
-                //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
+                Validate.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
@@ -409,7 +432,10 @@ namespace Player
             if (!IsComputer)
             {
                 playerMustMoveValid(io_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref checkerPieceToMove);
-                MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, io_PositionFrom, io_PositionTo);
+                if(!this.HasQuit)
+                {
+                    MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, io_PositionFrom, io_PositionTo);
+                }
             }
             else
             {
@@ -422,9 +448,14 @@ namespace Player
         {
             while (!isValidMove(i_GameBoard, io_PositionFrom, io_PositionTo, ref io_CurrentChecker))
             {
-                UserIntterface.PrintErrorMessage("Invalid move. player must move with to free positions.");
-                string move = UserIntterface.GetValidMove(i_GameBoard);
-                Validation.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                UserIntterface.PrintErrorMessage("Invalid move. player must move diagonal and to a free position.");
+                string move = UserIntterface.PlayerTurn(i_GameBoard.SizeOfBoard, this.Name, this.CheckerKind, ref m_hasQuit);
+                if(move == "Q")
+                {
+                    this.HasQuit = true;
+                    break;
+                }
+                Validate.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
                 //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
@@ -554,6 +585,39 @@ namespace Player
             }
 
             return foundCheckerPiece;
+        }
+    
+        private void computerMustCapture(Board i_GameBoard, ref string io_PositionFrom, ref string io_PositionTo,
+            ref CheckersPiece io_CurrentChecker, List<CheckersPiece> i_RivalPieces, ref CheckersPiece io_RivalChecker)
+        {
+            while (!isValidCapture(i_GameBoard,  io_PositionFrom,  io_PositionTo, ref io_CurrentChecker,
+                i_RivalPieces,
+                ref io_RivalChecker))
+            {
+                int randomKey = new Random().Next(Moves.Keys.Count);
+                io_PositionFrom = getRandomKey(randomKey);
+                int randomValue = new Random().Next(Moves[io_PositionFrom].Count);
+                io_PositionTo = Moves[io_PositionFrom][randomValue];
+            }
+        }
+
+        private string getRandomKey(int i_RandomIndex)
+        {
+            int i = 0;
+            string getPositionFrom = null;
+
+            foreach (string positionFrom in Moves.Keys)
+            {
+                if (i == i_RandomIndex)
+                {
+                    getPositionFrom = positionFrom;
+                    break;
+                }
+
+                i++;
+            }
+
+            return getPositionFrom;
         }
 
         public bool HasAnotherTurn()

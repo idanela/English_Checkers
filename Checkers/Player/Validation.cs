@@ -2,6 +2,7 @@ using System;
 using CheckerPiece;
 using CheckersBoard;
 using UI;
+
 namespace Player
 {
     public struct Validation
@@ -136,11 +137,20 @@ namespace Player
         public static void CheckValidMoveKingTool(Board i_GameBoard, User i_CurrentPlayer, CheckersPiece i_CurrentCheckerPiece,
                                                   ref string io_PositionFrom, ref string io_PositionTo)
         {
+            bool hasQuit = false;
+            string move = string.Empty;
             while (!i_GameBoard.IsCheckerAvailable((ushort)(io_PositionTo[k_RowIndex] - 'a'),
                 (ushort)(io_PositionTo[k_ColIndex] - 'A')))
             {
-                                UserIntterface.PrintErrorMessage("The request position to move is not legal. Please enter position, which the cell is free to move.");
-                UserIntterface.UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
+                
+                UserIntterface.PrintErrorMessage("The request position to move is not legal. Please enter position, which the cell is free to move.");
+                move = UserIntterface.PlayerTurn(i_GameBoard.SizeOfBoard, i_CurrentPlayer.Name, i_CurrentPlayer.CheckerKind, ref hasQuit);
+                i_CurrentPlayer.HasQuit = hasQuit;
+                if(!i_CurrentPlayer.HasQuit)
+                {
+                   ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
+                }
+               // UserIntterface.UserTurnConversation(i_CurrentPlayer.Name, ref io_PositionFrom, ref io_PositionTo);
             }
 
             // The current player can move only down and in diagonal move.

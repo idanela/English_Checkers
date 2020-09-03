@@ -58,6 +58,15 @@
       <Project>{ea737ba6-7a06-4c0c-9c53-935cae5329bf}</Project>
       <Name>UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Validation\Validation.csproj">
+      <Project>{0b721956-3bb0-47fa-8ad2-54119e362480}</Project>
+      <Name>Validation</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ex02.ConsoleUtils">
+      <HintPath>..\..\..\..\..\..\Temp\Ex02.ConsoleUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

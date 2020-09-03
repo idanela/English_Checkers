@@ -42,7 +42,6 @@
     <Compile Include="CaptureUtils.cs" />
     <Compile Include="MoveUtils.cs" />
     <Compile Include="User.cs" />
-    <Compile Include="Validation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\board\board.csproj">
@@ -56,6 +55,10 @@
     <ProjectReference Include="..\UI\UI.csproj">
       <Project>{ea737ba6-7a06-4c0c-9c53-935cae5329bf}</Project>
       <Name>UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation\Validation.csproj">
+      <Project>{0b721956-3bb0-47fa-8ad2-54119e362480}</Project>
+      <Name>Validation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

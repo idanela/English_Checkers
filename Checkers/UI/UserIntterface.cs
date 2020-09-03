@@ -94,69 +94,29 @@ namespace UI
             return WouldLikeToPlayAgain == '1';
         }
 
-        public static string GetValidMove(Board i_Board)
+        public static string GetValidMove(ushort i_BoardSize)
         {
             Console.WriteLine("please enter Q if you like to quit otherwise insert a move");
             string move = Console.ReadLine();
-            while (!IsValidMove(move,i_Board))
-            {
+
+            while (! Validate.IsValidMove(move, i_BoardSize))
+            {      
                 Console.WriteLine("Invalid Input");
                 move = Console.ReadLine();
             }
 
             return move;
         }
-
-        public static bool IsValidMove(string i_MoveToPreform, Board i_Board)
-        {
-            return i_MoveToPreform == "Q" || isLegalMove(i_MoveToPreform,i_Board);
-        }
-        public static bool isLegalMove(string i_moveToPreform,Board i_Board)
-        {
-            return (isLegalMovePattern(i_moveToPreform) && IsValidBoardMove(i_moveToPreform, i_Board)); 
-
-        }
-        public static bool isLegalMovePattern(string i_moveToPreform)
-        {
-                return i_moveToPreform.Length == 5 && 
-                char.IsUpper(i_moveToPreform[0]) &&
-                char.IsLower(i_moveToPreform[1]) &&
-                i_moveToPreform[2] == '>' &&
-                char.IsUpper(i_moveToPreform[3]) &&
-                char.IsLower(i_moveToPreform[4]);
-        }
-
-       public static bool  IsValidBoardMove(string i_moveToPreform, Board i_Board)
-        {
-            string location = string.Empty;
-            string destination = string.Empty;
-            Validate.ParsePositions(i_moveToPreform, ref location, ref destination);
-            
-            return checkIndexes(i_Board, location, destination);
-        }
-
-       public static bool checkIndexes(Board i_Board, string i_Location, string i_Destination)
-        {
-            ushort colIndex = (ushort) (i_Location[0] - 'A');
-            ushort rowIndex = (ushort)(i_Location[1] - 'a');
-            ushort destinationRowIndex = (ushort) (i_Destination[0] -'A');
-            ushort destinationColIndex = (ushort)(i_Destination[1] - 'a');
-            bool isValidIndexesMove = colIndex >= 0 && colIndex < i_Board.SizeOfBoard && rowIndex >= 0 && rowIndex < i_Board.SizeOfBoard
-                && destinationRowIndex >= 0 && destinationRowIndex < i_Board.SizeOfBoard && destinationRowIndex >= 0 && destinationRowIndex < i_Board.SizeOfBoard;
-
-            return isValidIndexesMove;
-        }
-
         public static void PrintForfeitMessage(string i_playerName, string i_RivalPlayerName)
         {
             string forfeitMessage = string.Format("{0} has quit, {1} is the winner", i_playerName,i_RivalPlayerName);
             Console.WriteLine(forfeitMessage);
         }
 
-        public static string  PlayerTurn( Board i_GameBoard, string i_PlayerName,CheckersPiece.ePieceKind pieceKind)
+        public static string PlayerTurn(ushort i_BoardSize, string i_PlayerName, CheckersPiece.ePieceKind pieceKind, ref bool i_HasQuit)
         {
             Console.Write(i_PlayerName + "'s turn");
-            if(pieceKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
+            if (pieceKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
             {
                 Console.WriteLine("(O)");
             }
@@ -165,8 +125,10 @@ namespace UI
                 Console.WriteLine("(X)");
 
             }
-            string currentMove = UserIntterface.GetValidMove(i_GameBoard);
 
+            string currentMove = UserIntterface.GetValidMove(i_BoardSize);
+
+            i_HasQuit = currentMove == "Q";
             return currentMove;
         }
 
@@ -184,6 +146,42 @@ namespace UI
         public static void PrintErrorMessage(String i_ErrorMsg)
         {
             Console.WriteLine(i_ErrorMsg);
+        }
+
+        public static void PrintResultOfTheGame(string i_PlayersName, string i_RivalsName,ushort i_PlayersScore, ushort i_RivalsScore)
+        {
+            string winner = string.Empty;
+            if(i_PlayersScore == i_RivalsScore)
+            {
+                Console.WriteLine("it's a draw");
+            }
+            else 
+            {
+                Console.Write("The winner is:");
+                if (i_PlayersScore > i_RivalsScore)
+                {
+                    Console.WriteLine(i_PlayersName);
+                }
+                else
+                {
+                    Console.WriteLine(i_PlayersName);
+                }   
+            }
+            
+        }
+
+        public static void PrintScore(string i_PlayersName, string i_RivalsName, ushort i_PlayersScore, ushort i_RivalsScore)
+        {
+            string ScoreMessage = string.Format(
+    @"
+{0}'s score is: {1} 
+{2}'s score is: {3}",
+i_PlayersName,
+i_PlayersScore,
+i_RivalsName,
+i_RivalsScore
+);
+            Console.WriteLine(ScoreMessage);
         }
     }
 
