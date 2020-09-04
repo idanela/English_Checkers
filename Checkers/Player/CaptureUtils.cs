@@ -55,7 +55,7 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex - 1);
             colIndex = (ushort)(i_Current.ColIndex + 1);
             rivalCheckerPieceUpRight = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCaptureRight = TryInsertCapturePosition(
+            canCaptureRight = tryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex - 2), (ushort)(i_Current.ColIndex + 2),
                 rivalCheckerPieceUpRight, ref io_CapturePositions);
@@ -64,7 +64,7 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex - 1);
             colIndex = (ushort)(i_Current.ColIndex - 1);
             rivalCheckerPieceUpLeft = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCaptureLeft = TryInsertCapturePosition(
+            canCaptureLeft = tryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex - 2), (ushort)(i_Current.ColIndex - 2),
                 rivalCheckerPieceUpLeft, ref io_CapturePositions);
@@ -83,7 +83,7 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex + 1);
             colIndex = (ushort)(i_Current.ColIndex + 1);
             rivalCheckerPieceDownRight = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCaptureRight = TryInsertCapturePosition(
+            canCaptureRight = tryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex + 2), (ushort)(i_Current.ColIndex + 2),
                 rivalCheckerPieceDownRight, ref io_CapturePositions);
@@ -92,7 +92,7 @@ namespace Player
             rowIndex = (ushort)(i_Current.RowIndex + 1);
             colIndex = (ushort)(i_Current.ColIndex - 1);
             rivalCheckerPieceDownLeft = FindCheckerPiece(rowIndex, colIndex, i_RivalCheckersPiece);
-            canCaptureLeft = TryInsertCapturePosition(
+            canCaptureLeft = tryInsertCapturePosition(
                 i_GameBoard, i_Current,
                 (ushort)(i_Current.RowIndex + 2), (ushort)(i_Current.ColIndex - 2),
                 rivalCheckerPieceDownLeft, ref io_CapturePositions);
@@ -100,7 +100,7 @@ namespace Player
             return canCaptureLeft || canCaptureRight;
         }
 
-        private static bool TryInsertCapturePosition(
+        private static bool tryInsertCapturePosition(
             Board i_GameBoard, CheckersPiece i_CurrentChecker,
             ushort i_RowIndex, ushort i_ColIndex,
             CheckersPiece i_RivalChecker, ref Dictionary<string, List<string>> io_CapturePositions)

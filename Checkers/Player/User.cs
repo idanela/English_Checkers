@@ -509,12 +509,12 @@ namespace Player
         {
             if (!io_CurrentChecker.IsKing)
             {
-                MoveUtils.MoveRegularTool(io_GameBoard, ref io_CurrentChecker, i_PositionTo);
+                MoveUtils.MoveTool(io_GameBoard, ref io_CurrentChecker, i_PositionTo);
                 MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
             }
             else
             {
-                MoveUtils.MoveKingTool(io_GameBoard, ref io_CurrentChecker, i_PositionTo);
+                MoveUtils.MoveTool(io_GameBoard, ref io_CurrentChecker, i_PositionTo);
             }
         }
 
@@ -525,12 +525,12 @@ namespace Player
 
             if (!io_CurrentChecker.IsKing)
             {
-                MoveUtils.MoveRegularTool(io_GameBoard, ref io_CurrentChecker, positions[1]);
+                MoveUtils.MoveTool(io_GameBoard, ref io_CurrentChecker, positions[1]);
                 MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
             }
             else
             {
-                MoveUtils.MoveKingTool(io_GameBoard, ref io_CurrentChecker, positions[1]);
+                MoveUtils.MoveTool(io_GameBoard, ref io_CurrentChecker, positions[1]);
             }
         }
 

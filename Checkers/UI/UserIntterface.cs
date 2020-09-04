@@ -17,7 +17,7 @@ namespace UI
         {
             string playerName = Console.ReadLine();
 
-            while (!IsValidUserName(playerName))
+            while (!isValidUserName(playerName))
             {
                 Console.WriteLine("Invalid Input please type your name again.");
                 playerName = Console.ReadLine();
@@ -26,7 +26,7 @@ namespace UI
             return playerName;
         }
 
-            private static bool IsValidUserName(string i_NameOfPlayer)
+            private static bool isValidUserName(string i_NameOfPlayer)
             {
                 bool isValidName = i_NameOfPlayer.Length <= 20 && i_NameOfPlayer.Length > 0;
 
@@ -75,13 +75,13 @@ namespace UI
             return choice;
         }
 
-        private static char getValidchoice(string PlayerChoice)
+        private static char getValidchoice(string i_PlayerChoice)
         {
             char choice;
-            while (!char.TryParse(PlayerChoice, out choice) || (choice != '1' && choice != '2'))
+            while (!char.TryParse(i_PlayerChoice, out choice) || (choice != '1' && choice != '2'))
             {
                 Console.WriteLine("invalid choice. please try again:");
-                PlayerChoice = Console.ReadLine();
+                i_PlayerChoice = Console.ReadLine();
             }
 
             return choice;
@@ -115,10 +115,10 @@ namespace UI
             Console.WriteLine(forfeitMessage);
         }
 
-        public static string GetPlayerTurn(ushort i_BoardSize, string i_PlayerName, CheckersPiece.ePieceKind pieceKind, ref bool i_HasQuit)
+        public static string GetPlayerTurn(ushort i_BoardSize, string i_PlayerName, CheckersPiece.ePieceKind i_PieceKind, ref bool i_HasQuit)
         {
             Console.Write(i_PlayerName + "'s turn");
-            if (pieceKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
+            if (i_PieceKind == CheckerPiece.CheckersPiece.ePieceKind.MainPlayerTool)
             {
                 Console.WriteLine("(O)");
             }

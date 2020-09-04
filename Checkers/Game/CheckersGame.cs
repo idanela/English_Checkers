@@ -20,10 +20,10 @@ namespace Game
             string rivalName = getSecondPlayersName(choseRival, ref isComputer); 
             User rivalPlayer = new User(rivalName, User.ePlayerType.RivalPlayer, isComputer);
 
-            StartGame(ref firstPlayer, ref rivalPlayer, gameBoard);
+            startGame(ref firstPlayer, ref rivalPlayer, gameBoard);
         }
 
-        private static void StartGame(ref User i_FirstPlayer, ref User i_SecondPlayer, Board i_GameBoard)
+        private static void startGame(ref User i_FirstPlayer, ref User i_SecondPlayer, Board i_GameBoard)
         {
             bool isGameFinished = false;
             bool isFirstPlayerTurn = true;   
@@ -51,7 +51,7 @@ namespace Game
 
             if (UserIntterface.WouldLikeToPlayAgain())
             { 
-                StartGame(ref i_FirstPlayer, ref i_SecondPlayer, i_GameBoard);
+                startGame(ref i_FirstPlayer, ref i_SecondPlayer, i_GameBoard);
             }
         }
 

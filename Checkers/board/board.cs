@@ -62,21 +62,21 @@ namespace CheckersBoard
             return equalLine.ToString();
         }
 
-        private void addAllCheckersToBoard(ref StringBuilder CheckersBoard, ref string lineString) // Add lines and checker pieces to checker Board.
+        private void addAllCheckersToBoard(ref StringBuilder io_CheckersBoard, ref string io_LineString) // Add lines and checker pieces to checker Board.
         {
             char leftIndex = 'a';
             for (int i = 0; i < m_SizeOfBoard; i++)
             {
-                CheckersBoard.AppendFormat(
+                io_CheckersBoard.AppendFormat(
                     @"
 {0}
 {1}|",
-lineString,
+io_LineString,
 leftIndex);
 
                 for (int j = 0; j < m_SizeOfBoard; j++)
                 {
-                    CheckersBoard.AppendFormat(" {0} |", m_CheckersBoard[i, j]); // Add to stringBuilder Checker with it's content
+                    io_CheckersBoard.AppendFormat(" {0} |", m_CheckersBoard[i, j]); // Add to stringBuilder Checker with it's content
                 }
 
                 leftIndex++; // Increases the row index. 
@@ -158,9 +158,9 @@ leftIndex);
             return IsCheckerValidPosition(i_RowIndex, i_ColIndex) && m_CheckersBoard[i_RowIndex, i_ColIndex] == k_BlankChecker;
         }
 
-        public ushort GetIndexInBoard(ref string i_DestinationChecker, out ushort o_colIndex) // Gets an index according to the name of checker. 
+        public ushort GetIndexInBoard(ref string i_DestinationChecker, out ushort o_ColIndex) // Gets an index according to the name of checker. 
         {
-            o_colIndex = (ushort)(i_DestinationChecker[0] - 'A');
+            o_ColIndex = (ushort)(i_DestinationChecker[0] - 'A');
             return (ushort)(i_DestinationChecker[1] - 'a');
         }
 
@@ -183,9 +183,9 @@ leftIndex);
         }
 
         // Update the board after a checker piece eat another.
-        public void UpdateAfterEating(ushort i_row, ushort i_Col, ushort i_newRow, ushort i_NewCol, ushort i_RowTokill, ushort i_ColTokill)
+        public void UpdateAfterEating(ushort i_Row, ushort i_Col, ushort i_NewRow, ushort i_NewCol, ushort i_RowTokill, ushort i_ColTokill)
         {
-            UpdateBoardAccordingToPlayersMove(i_row, i_Col, i_newRow, i_NewCol);
+            UpdateBoardAccordingToPlayersMove(i_Row, i_Col, i_NewRow, i_NewCol);
             deleteCheckerPieceFromBoard(i_RowTokill, i_ColTokill);
         }
         
