@@ -124,7 +124,7 @@ namespace Player
         // Methods:
         public void InitializeCheckersArray(ushort i_BoardSize)
         {
-            int sizeOfPieces = (i_BoardSize / 2) * 3;
+            int sizeOfPieces = (i_BoardSize / 2) * (i_BoardSize / 2 - 1);
 
             m_CheckersPiece = new List<CheckersPiece>(sizeOfPieces);
             initializePositions(i_BoardSize);
@@ -148,7 +148,7 @@ namespace Player
                         setSecondToolPosition(i_BoardSize, i, j, ref toolIndex);
                     }
 
-                    if (toolIndex == (i_BoardSize / 2) * 3)
+                    if (toolIndex == (i_BoardSize / 2) * (i_BoardSize / 2 - 1))
                     {
                         reachLastIndex = true;
                         break;
@@ -241,7 +241,7 @@ namespace Player
                 playCapture(io_GameBoard, ref i_PositionFrom, ref i_PositionTo, i_RivalPlayer.Pieces);
                 if(!this.HasQuit)
                 {
-                    if (createCaptureMoveList(io_GameBoard, i_RivalPlayer).Count == 0)
+                    if (CreateCaptureMoveList(io_GameBoard, i_RivalPlayer).Count == 0)
                     {
                         m_CurrentCheckerPiece = null;
                     }
@@ -252,7 +252,7 @@ namespace Player
             else
             {
                 // If the player still have moves to do.
-                if (Moves == null || m_CheckersPiece.Count == 0)
+                if (Moves == null || m_CheckersPiece.Count == 0 )
                 {
                     isGameOver = true;
                 }
@@ -288,14 +288,14 @@ namespace Player
             {
                 // If there's a "soldier" that can capture again.
                 // If there's capture in a row.
-                m_Moves = createCaptureMoveList(i_GameBoard, i_RivalPlayer);
+                m_Moves = CreateCaptureMoveList(i_GameBoard, i_RivalPlayer);
             }
 
             return canCapture;
         }
 
         // Certain Tool's Capture Move List:
-        private Dictionary<string, List<string>> createCaptureMoveList(Board i_GameBoard, User i_RivalPlayer)
+        public Dictionary<string, List<string>> CreateCaptureMoveList(Board i_GameBoard, User i_RivalPlayer)
         {
             Dictionary<string, List<string>> captureList = new Dictionary<string, List<string>>();
 
@@ -625,9 +625,13 @@ namespace Player
             return getPositionFrom;
         }
 
-        public bool HasAnotherTurn()
+        public bool HasAnotherTurn(ref User i_RivalPlayer, Board i_GameBoard)
         {
-            return m_CurrentCheckerPiece != null;
+            Dictionary<string, List<string>> moves = new Dictionary<string, List<string>>();
+            moves = MoveUtils.CreateRegularMoves(i_RivalPlayer, i_GameBoard);
+            CaptureUtils.CanUserCapture(i_GameBoard, i_RivalPlayer, this, ref moves);
+
+            return m_CurrentCheckerPiece != null || moves.Count == 0;
         }
     }
 }

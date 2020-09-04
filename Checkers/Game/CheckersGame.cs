@@ -1,9 +1,9 @@
 ﻿using System;
 using Player;
 using CheckersBoard;
-using CheckerPiece;
 using UI;
 using Validation;
+using System.Collections.Generic;
 
 namespace Game
 {
@@ -42,8 +42,9 @@ namespace Game
                     isGameFinished = PlayYourTurn(ref i_SecondPlayer, ref i_FirstPlayer, i_GameBoard, ref isGameFinished);
                 }
 
-                getAnotherTurn(ref i_FirstPlayer, ref i_SecondPlayer, ref isFirstPlayerTurn);
+                getAnotherTurn(ref i_FirstPlayer, ref i_SecondPlayer, ref isFirstPlayerTurn, i_GameBoard);
                 isFirstPlayerTurn = !isFirstPlayerTurn;
+                isGameFinished = isGameFinished || isDraw(ref i_FirstPlayer, ref i_SecondPlayer, i_GameBoard);
             }
 
             finishRound(ref i_FirstPlayer, ref i_SecondPlayer);
@@ -117,8 +118,6 @@ namespace Game
             {
                 i_SecondPlayer.Score += (ushort)(secondPlayerScore - firstPlayerScore);
             }
-
-            UserIntterface.PrintResultOfTheGame(i_FirstPlayer.Name, i_SecondPlayer.Name, firstPlayerScore, secondPlayerScore);
         }
 
         private static void printResult(User i_Player, User i_RivalPlayer)
@@ -148,12 +147,26 @@ namespace Game
             UserIntterface.PrintScore(i_FirstPlayer.Name, i_SecondPlayer.Name, i_FirstPlayer.Score, i_SecondPlayer.Score);
         }
 
-        private static void getAnotherTurn(ref User i_Player, ref User i_Rival, ref bool i_currentTurn)
+        private static void getAnotherTurn(ref User i_Player, ref User i_Rival, ref bool i_currentTurn, Board i_GameBoard)
         {
-            if (i_Player.HasAnotherTurn() || i_Rival.HasAnotherTurn())
+            if (i_Player.HasAnotherTurn(ref i_Rival, i_GameBoard) || i_Rival.HasAnotherTurn(ref i_Player, i_GameBoard)) 
             {
                 i_currentTurn = !i_currentTurn;
             }
+        }
+
+        private static bool isDraw(ref User i_FirstPlayer, ref User i_SecondPlayer, Board i_GameBoard)
+        {
+            Dictionary<string, List<string>> movesFirstPlayer = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> movesSecondPlayer = new Dictionary<string, List<string>>();
+
+            movesFirstPlayer = MoveUtils.CreateRegularMoves(i_FirstPlayer, i_GameBoard);
+            CaptureUtils.CanUserCapture(i_GameBoard, i_FirstPlayer, i_SecondPlayer, ref movesFirstPlayer);
+
+            movesSecondPlayer = MoveUtils.CreateRegularMoves(i_SecondPlayer, i_GameBoard);
+            CaptureUtils.CanUserCapture(i_GameBoard, i_SecondPlayer, i_FirstPlayer, ref movesSecondPlayer);
+
+            return movesFirstPlayer.Count == 0 && movesSecondPlayer.Count == 0;
         }
     }
 }
