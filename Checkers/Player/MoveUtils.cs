@@ -118,6 +118,7 @@ namespace Player
             {
                 io_Options.Add(currentPosition, new List<string>());
             }
+
             io_Options[currentPosition].Add(i_OptionPosition);
         }
 
@@ -130,9 +131,8 @@ namespace Player
             return new string(indexes);
         }
 
-
         // Move Tools Methods:
-        public static void MoveRegularTool(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionTo)
+        public static void MoveRegularTool(Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionTo)
         {
             ushort nextRowIndex = (ushort)(i_PositionTo[k_RowIndex] - 'a');
             ushort nextColIndex = (ushort)(i_PositionTo[k_ColIndex] - 'A');
@@ -151,7 +151,7 @@ namespace Player
             io_CurrentChecker.ChangePosition(nextRowIndex, nextColIndex);
         }
 
-        public static void MoveKingTool(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionTo)
+        public static void MoveKingTool(Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionTo)
         {
             ushort nextRowIndex = (ushort)(i_PositionTo[k_RowIndex] - 'a');
             ushort nextColIndex = (ushort)(i_PositionTo[k_ColIndex] - 'A');

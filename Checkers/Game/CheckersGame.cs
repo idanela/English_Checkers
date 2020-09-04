@@ -13,11 +13,11 @@ namespace Game
         {
             bool isComputer = false;
             string firstPlayerName = UserIntterface.GetValidUserName();
-            User firstPlayer = new User(firstPlayerName, User.ePlayerType.MainPlayer,isComputer);
+            User firstPlayer = new User(firstPlayerName, User.ePlayerType.MainPlayer, isComputer);
             ushort boardSize = UserIntterface.GetValidBoardSize();
             Board gameBoard = new Board(boardSize);
             char choseRival = UserIntterface.GetRival();
-            string rivalName = getSecondPlayersName(choseRival,ref isComputer); 
+            string rivalName = getSecondPlayersName(choseRival, ref isComputer); 
             User rivalPlayer = new User(rivalName, User.ePlayerType.RivalPlayer, isComputer);
 
             StartGame(ref firstPlayer, ref rivalPlayer, gameBoard);
@@ -35,11 +35,11 @@ namespace Game
                 i_GameBoard.printBoard();
                 if (isFirstPlayerTurn)
                 {
-                    isGameFinished = PlayYourTurn(ref i_FirstPlayer, ref i_SecondPlayer, i_GameBoard, ref isGameFinished) ;          
+                    isGameFinished = PlayYourTurn(ref i_FirstPlayer, ref i_SecondPlayer, i_GameBoard, ref isGameFinished);          
                 }
                 else
                 {
-                    isGameFinished = PlayYourTurn(ref i_SecondPlayer, ref i_FirstPlayer, i_GameBoard,ref isGameFinished) ;
+                    isGameFinished = PlayYourTurn(ref i_SecondPlayer, ref i_FirstPlayer, i_GameBoard, ref isGameFinished);
                 }
 
                 getAnotherTurn(ref i_FirstPlayer, ref i_SecondPlayer, ref isFirstPlayerTurn);
@@ -53,6 +53,7 @@ namespace Game
                 StartGame(ref i_FirstPlayer, ref i_SecondPlayer, i_GameBoard);
             }
         }
+
         private static void setBeginningOfGame(ref User i_FirstPlayer, ref User i_SecondPlayer, Board i_GameBoard)
         {
             i_GameBoard.InitializeBoard();
@@ -62,7 +63,7 @@ namespace Game
             i_SecondPlayer.HasQuit = false;
         }
 
-      private static string getSecondPlayersName(char i_ChioceOfRival , ref bool io_IsComputer)
+      private static string getSecondPlayersName(char i_ChioceOfRival, ref bool io_IsComputer)
         {
             string rivalName = string.Empty;
 
@@ -79,7 +80,7 @@ namespace Game
             return rivalName;
         }
 
-       public static bool PlayYourTurn(ref User i_Player, ref User i_RivalPlayer, Board i_GameBoard,ref bool io_IsGameFinished)
+       public static bool PlayYourTurn(ref User i_Player, ref User i_RivalPlayer, Board i_GameBoard, ref bool io_IsGameFinished)
        {
             string currentMove = string.Empty;
             string currentLocation = null;
@@ -87,7 +88,7 @@ namespace Game
             bool hasQuit = false;
             if (!i_Player.IsComputer)
             {
-                currentMove = UserIntterface.GetPlayerTurn(i_GameBoard.SizeOfBoard, i_Player.Name, i_Player.CheckerKind,ref hasQuit);
+                currentMove = UserIntterface.GetPlayerTurn(i_GameBoard.SizeOfBoard, i_Player.Name, i_Player.CheckerKind, ref hasQuit);
                 i_Player.HasQuit = hasQuit; 
                if(!i_Player.HasQuit)
                {
@@ -97,7 +98,7 @@ namespace Game
 
             if(!i_Player.HasQuit)
             {
-                io_IsGameFinished = i_Player.MakeMove(ref i_GameBoard, i_RivalPlayer, currentLocation, destinationPosition);
+                io_IsGameFinished = i_Player.MakeMove(i_GameBoard, i_RivalPlayer, currentLocation, destinationPosition);
             }
 
             return hasQuit || io_IsGameFinished;
@@ -125,7 +126,6 @@ namespace Game
             if (i_Player.HasQuit)
             {
                 UserIntterface.PrintForfeitMessage(i_Player.Name, i_RivalPlayer.Name);
-
             }
             else if (i_RivalPlayer.HasQuit)
             {
@@ -148,13 +148,12 @@ namespace Game
             UserIntterface.PrintScore(i_FirstPlayer.Name, i_SecondPlayer.Name, i_FirstPlayer.Score, i_SecondPlayer.Score);
         }
 
-        private static void getAnotherTurn(ref User i_Player, ref User i_Rival , ref bool i_currentTurn)
+        private static void getAnotherTurn(ref User i_Player, ref User i_Rival, ref bool i_currentTurn)
         {
-            if(i_Player.HasAnotherTurn() || i_Rival.HasAnotherTurn())
+            if (i_Player.HasAnotherTurn() || i_Rival.HasAnotherTurn())
             {
                 i_currentTurn = !i_currentTurn;
             }
         }
-
     }
 }

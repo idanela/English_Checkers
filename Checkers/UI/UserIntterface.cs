@@ -2,6 +2,7 @@
 using CheckersBoard;
 using CheckerPiece;
 using Validation;
+
 namespace UI
 {
    public class UserIntterface
@@ -99,7 +100,7 @@ namespace UI
             Console.WriteLine("please enter Q if you like to quit otherwise insert a move");
             string move = Console.ReadLine();
 
-            while (! Validate.IsValidMove(move, i_BoardSize))
+            while (!Validate.IsValidMove(move, i_BoardSize))
             {      
                 Console.WriteLine("Invalid Input");
                 move = Console.ReadLine();
@@ -107,9 +108,10 @@ namespace UI
 
             return move;
         }
+
         public static void PrintForfeitMessage(string i_playerName, string i_RivalPlayerName)
         {
-            string forfeitMessage = string.Format("{0} has quit, {1} is the winner", i_playerName,i_RivalPlayerName);
+            string forfeitMessage = string.Format("{0} has quit, {1} is the winner", i_playerName, i_RivalPlayerName);
             Console.WriteLine(forfeitMessage);
         }
 
@@ -123,7 +125,6 @@ namespace UI
             else
             {
                 Console.WriteLine("(X)");
-
             }
 
             string currentMove = UserIntterface.GetValidMove(i_BoardSize);
@@ -132,12 +133,12 @@ namespace UI
             return currentMove;
         }
 
-        public static void PrintErrorMessage(String i_ErrorMsg)
+        public static void PrintErrorMessage(string i_ErrorMsg)
         {
             Console.WriteLine(i_ErrorMsg);
         }
 
-        public static void PrintResultOfTheGame(string i_PlayersName, string i_RivalsName,ushort i_PlayersScore, ushort i_RivalsScore)
+        public static void PrintResultOfTheGame(string i_PlayersName, string i_RivalsName, ushort i_PlayersScore, ushort i_RivalsScore)
         {
             string winner = string.Empty;
             if(i_PlayersScore == i_RivalsScore)
@@ -155,8 +156,7 @@ namespace UI
                 {
                     Console.WriteLine(i_RivalsName);
                 }   
-            }
-            
+            }       
         }
 
         public static void PrintScore(string i_PlayersName, string i_RivalsName, ushort i_PlayersScore, ushort i_RivalsScore)
@@ -168,10 +168,8 @@ namespace UI
 i_PlayersName,
 i_PlayersScore,
 i_RivalsName,
-i_RivalsScore
-);
+i_RivalsScore);
             Console.WriteLine(ScoreMessage);
         }
     }
-
 }

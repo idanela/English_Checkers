@@ -15,21 +15,21 @@ namespace Player
 
         // Data members:
         private readonly string m_Name;
+        private readonly bool m_IsComputer;
+        private readonly ePlayerType m_PlayerNumber;
         private ushort m_Score;
         private List<CheckersPiece> m_CheckersPiece;
         private CheckersPiece.ePieceKind m_CheckerPieceKind;
         private CheckersPiece m_CurrentCheckerPiece;
-        private readonly ePlayerType m_PlayerNumber;
         private Dictionary<string, List<string>> m_Moves;
-        private readonly bool m_IsComputer;
         private bool m_hasQuit;
+
         // Enums:
         public enum ePlayerType
         {
             MainPlayer = 0,
             RivalPlayer = 1
         }
-
 
         // Constructors:
         public User(string i_Name, ePlayerType i_PlayerNumber, bool i_IsComputer)
@@ -61,6 +61,7 @@ namespace Player
             {
                 return m_Score;
             }
+
             set
             {
                 m_Score = value;
@@ -113,18 +114,17 @@ namespace Player
             {
                 return m_hasQuit;
             }
+
             set
             {
                 m_hasQuit = value;
             }
         }
 
-
-
         // Methods:
         public void InitializeCheckersArray(ushort i_BoardSize)
         {
-            int sizeOfPieces = ((i_BoardSize / 2) * 3);
+            int sizeOfPieces = (i_BoardSize / 2) * 3;
 
             m_CheckersPiece = new List<CheckersPiece>(sizeOfPieces);
             initializePositions(i_BoardSize);
@@ -218,6 +218,7 @@ namespace Player
                     playerScore++;
                 }
             }
+
             return playerScore;
         }
 
@@ -228,10 +229,10 @@ namespace Player
 
         public void MakeToolAKing(Board i_GameBoard, ref CheckersPiece io_CurrentCheckerPiece)
         {
-            io_CurrentCheckerPiece.GotToOtherSideOfBoard(ref i_GameBoard);
+            io_CurrentCheckerPiece.GotToOtherSideOfBoard(i_GameBoard);
         }
 
-        public bool MakeMove(ref Board io_GameBoard, User i_RivalPlayer, string i_PositionFrom, string i_PositionTo)
+        public bool MakeMove(Board io_GameBoard, User i_RivalPlayer, string i_PositionFrom, string i_PositionTo)
         {
             bool isGameOver = false;
 
@@ -251,7 +252,7 @@ namespace Player
             else
             {
                 // If the player still have moves to do.
-                if (Moves == null ||m_CheckersPiece.Count == 0)
+                if (Moves == null || m_CheckersPiece.Count == 0)
                 {
                     isGameOver = true;
                 }
@@ -283,9 +284,9 @@ namespace Player
                     m_Moves = moves;
                 }
             }
-            // If there's a "soldier" that can capture again.
             else
             {
+                // If there's a "soldier" that can capture again.
                 // If there's capture in a row.
                 m_Moves = createCaptureMoveList(i_GameBoard, i_RivalPlayer);
             }
@@ -332,12 +333,14 @@ namespace Player
                 computerMustCapture(io_GameBoard, ref io_PositionFrom, ref io_PositionTo,
                     ref checkerPieceToMove, i_RivalPlayerPieces, ref rivalCheckerPiece);
             }
+
             if(!this.HasQuit)
             {
                 // Checks if there's an optional capture, and updating the data structure.
                 MakeCapture(io_GameBoard, ref checkerPieceToMove, ref io_PositionTo, ref rivalCheckerPiece);
+
                 // Remove checker piece from rival's soldiers.
-                checkerPieceToMove.GotToOtherSideOfBoard(ref io_GameBoard);
+                checkerPieceToMove.GotToOtherSideOfBoard(io_GameBoard);
                 i_RivalPlayerPieces.Remove(rivalCheckerPiece);
             }
         }
@@ -355,6 +358,7 @@ namespace Player
                     this.HasQuit = true;
                     break;
                 }
+
                 Validate.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
             }
         }
@@ -436,12 +440,12 @@ namespace Player
                 playerMustMoveValid(io_GameBoard, ref io_PositionFrom, ref io_PositionTo, ref checkerPieceToMove);
                 if(!this.HasQuit)
                 {
-                    MakeUserMove(ref io_GameBoard, ref checkerPieceToMove, io_PositionFrom, io_PositionTo);
+                    MakeUserMove(io_GameBoard, ref checkerPieceToMove, io_PositionFrom, io_PositionTo);
                 }
             }
             else
             {
-                MakeComputerMove(ref io_GameBoard, ref checkerPieceToMove);
+                MakeComputerMove(io_GameBoard, ref checkerPieceToMove);
             }
         }
 
@@ -457,8 +461,8 @@ namespace Player
                     this.HasQuit = true;
                     break;
                 }
+
                 Validate.ParsePositions(move, ref io_PositionFrom, ref io_PositionTo);
-                //Validation.UserTurnConversation(Name, ref io_PositionFrom, ref io_PositionTo);
             }
         }
 
@@ -501,33 +505,32 @@ namespace Player
             return isFound;
         }
 
-        public void MakeUserMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
+        public void MakeUserMove(Board io_GameBoard, ref CheckersPiece io_CurrentChecker, string i_PositionFrom, string i_PositionTo)
         {
             if (!io_CurrentChecker.IsKing)
             {
-                MoveUtils.MoveRegularTool(ref io_GameBoard, ref io_CurrentChecker, i_PositionTo);
+                MoveUtils.MoveRegularTool(io_GameBoard, ref io_CurrentChecker, i_PositionTo);
                 MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
             }
             else
             {
-                MoveUtils.MoveKingTool(ref io_GameBoard, ref io_CurrentChecker, i_PositionTo);
+                MoveUtils.MoveKingTool(io_GameBoard, ref io_CurrentChecker, i_PositionTo);
             }
         }
 
-
         // Computer Player Methods:
-        public void MakeComputerMove(ref Board io_GameBoard, ref CheckersPiece io_CurrentChecker)
+        public void MakeComputerMove(Board io_GameBoard, ref CheckersPiece io_CurrentChecker)
         {
             string[] positions = getRandomMove(io_GameBoard, ref io_CurrentChecker);
 
             if (!io_CurrentChecker.IsKing)
             {
-                MoveUtils.MoveRegularTool(ref io_GameBoard, ref io_CurrentChecker, positions[1]);
+                MoveUtils.MoveRegularTool(io_GameBoard, ref io_CurrentChecker, positions[1]);
                 MakeToolAKing(io_GameBoard, ref io_CurrentChecker);
             }
             else
             {
-                MoveUtils.MoveKingTool(ref io_GameBoard, ref io_CurrentChecker, positions[1]);
+                MoveUtils.MoveKingTool(io_GameBoard, ref io_CurrentChecker, positions[1]);
             }
         }
 

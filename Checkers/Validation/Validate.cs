@@ -1,5 +1,4 @@
-﻿
-namespace Validation
+﻿namespace Validation
 {
     public class Validate
     {
@@ -14,7 +13,7 @@ namespace Validation
 
         private static bool isLegalMove(string i_MoveToPreform, ushort i_BoardSize)
         {
-            return (isLegalMovePattern(i_MoveToPreform) && isValidBoardMove(i_MoveToPreform, i_BoardSize));
+            return isLegalMovePattern(i_MoveToPreform) && isValidBoardMove(i_MoveToPreform, i_BoardSize);
         }
 
         private static bool isLegalMovePattern(string i_MoveToPreform)

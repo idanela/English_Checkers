@@ -7,10 +7,10 @@ namespace CheckerPiece
     {
         public enum ePieceKind
         {
-          MainPlayerTool= 'O',
-          SecondPlayerTool='X', 
+          MainPlayerTool = 'O',
+          SecondPlayerTool = 'X', 
           MainPlayerKing = 'U',
-          SecondPlayerKing= 'K'
+          SecondPlayerKing = 'K'
         }
 
         // Members
@@ -65,13 +65,13 @@ namespace CheckerPiece
             }
         }
 
-        public void GotToOtherSideOfBoard(ref Board i_CheckersBoard) // Checks if a checker piece need to become a king.
+        public void GotToOtherSideOfBoard(Board i_CheckersBoard) // Checks if a checker piece need to become a king.
         {
             if((this.PieceKind == ePieceKind.MainPlayerTool && m_RowIndex == (ushort)i_CheckersBoard.SizeOfBoard - 1)
               || (this.PieceKind == ePieceKind.SecondPlayerTool && m_RowIndex == 0))
             {
                 this.becomeKing();
-                updateKingChecker(ref i_CheckersBoard);
+                updateKingChecker(i_CheckersBoard);
             }
         }
 
@@ -89,7 +89,7 @@ namespace CheckerPiece
             m_IsKing = true;
         }
 
-        private void updateKingChecker(ref Board i_CheckersBoard)
+        private void updateKingChecker(Board i_CheckersBoard)
         {
             i_CheckersBoard.CheckersBoard[this.RowIndex, this.ColIndex] = (char)this.PieceKind;
         }
